@@ -1,7 +1,3 @@
-/**
- * A system for calculating nwscript dependencies. Makes some assumptions specific
- * to the PRC setup.
- */
 package prc.makedep;
 
 import java.util.*;
@@ -22,7 +18,6 @@ import static prc.Main.*;
  * -?, --help        This text
  * 
  * 
- * @author Ornedan
  */
 public class Main {
 

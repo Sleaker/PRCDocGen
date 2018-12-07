@@ -5,9 +5,6 @@ import java.util.*;
 import java.util.regex.*;
 import java.util.concurrent.*;
 
-/* Static import in order to let me use the enum constants in switches */
-import static prc.autodoc.Main.SpellType.*;
-
 /* Mutual static import to make the file sizes manageable */
 import static prc.autodoc.EntryGeneration.*;
 import static prc.autodoc.MenuGeneration.*;
@@ -21,7 +18,7 @@ import static prc.Main.*;
  * the PRC pack from 2da and TLK files. As a side effect of doing so, it finds
  * many errors present in the 2das.
  */
-public class Main{
+public class Main {
 	/**
 	 * A small data structure class that gives access to both normal and custom
 	 * TLK with the same method
@@ -109,12 +106,12 @@ public class Main{
 			/**
 			 * @see java.lang.Runnable#run()
 			 */
-			public void run(){
-				try{
+			public void run() {
+				try {
 					Data_2da data = Data_2da.load2da(pathToLoad, true);
 					list.add(data);
 					latch.countDown();
-				}catch(Exception e){
+				} catch(Exception e) {
 					err_pr.println("Failure while reading main 2das. Exception data:\n");
 					err_pr.printException(e);
 					System.exit(1);

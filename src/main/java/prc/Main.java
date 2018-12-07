@@ -28,84 +28,84 @@ public class Main {
 		if(args.length == 0 || args[0].equals("--help"))
 			readMe();
 
-		String toCall = args[0];
-		String[] paramsToPass = new String[args.length - 1];
-		System.arraycopy(args, 1, paramsToPass, 0, paramsToPass.length);
+		String app = args[0];
+		String[] params = new String[args.length - 1];
+		System.arraycopy(args, 1, params, 0, params.length);
 
-		if(toCall.equals("manual")){
-			prc.autodoc.Main.main(paramsToPass);
+		if(app.equals("manual")) {
+			prc.autodoc.Main.main(params);
 		}
-		else if(toCall.equals("2da")){
-			prc.autodoc.Data_2da.main(paramsToPass);
+		else if(app.equals("2da")) {
+			prc.autodoc.Data_2da.main(params);
 		}
-		else if(toCall.equals("codegen")){
-			prc.utils.CodeGen.main(paramsToPass);
+		else if(app.equals("codegen")) {
+			prc.utils.CodeGen.main(params);
 		}
-		else if(toCall.equals("radials")){
-			prc.utils.Radials.main(paramsToPass);
+		else if(app.equals("radials")) {
+			prc.utils.Radials.main(params);
 		}
-		else if(toCall.equals("lssubrad")){
-			prc.utils.ListSubradials.main(paramsToPass);
+		else if(app.equals("lssubrad")) {
+			prc.utils.ListSubradials.main(params);
 		}
-		else if(toCall.equals("dupsubrad")){
-			prc.utils.DuplicateSubradials.main(paramsToPass);
+		else if(app.equals("dupsubrad")) {
+			prc.utils.DuplicateSubradials.main(params);
 		}
-		else if(toCall.equals("makedep")){
-			prc.makedep.Main.main(paramsToPass);
+		else if(app.equals("makedep")) {
+			prc.makedep.Main.main(params);
 		}
-		else if(toCall.equals("upclsfeat")){
-			prc.utils.AllClassFeatUpdater.main(paramsToPass);
+		else if(app.equals("upclsfeat")) {
+			prc.utils.AllClassFeatUpdater.main(params);
 		}
-		else if(toCall.equals("lsentries")){
-			prc.utils.List2daEntries.main(paramsToPass);
+		else if(app.equals("lsentries")) {
+			prc.utils.List2daEntries.main(params);
 		}
-		else if(toCall.equals("dupentries")){
-			prc.utils.Duplicate2daEntryDetector.main(paramsToPass);
+		else if(app.equals("dupentries")) {
+			prc.utils.Duplicate2daEntryDetector.main(params);
 		}
-		else if(toCall.equals("2datosql")){
-			prc.utils.SQLMaker.main(paramsToPass);
+		else if(app.equals("2datosql")) {
+			prc.utils.SQLMaker.main(params);
 		}
-		else if(toCall.equals("spellbookmaker")){
-			prc.utils.SpellbookMaker.main(paramsToPass);
+		else if(app.equals("spellbookmaker")) {
+			prc.utils.SpellbookMaker.main(params);
 		}
-		else if(toCall.equals("amsspellbookmaker")){
-			prc.utils.AMSSpellbookMaker.main(paramsToPass);
+		else if(app.equals("amsspellbookmaker")) {
+			prc.utils.AMSSpellbookMaker.main(params);
 		}
-		else if(toCall.equals("itempropmaker")){
-			prc.utils.ItempropMaker.main(paramsToPass);
+		else if(app.equals("itempropmaker")) {
+			prc.utils.ItempropMaker.main(params);
 		}
-		else if(toCall.equals("letoxml")){
-			prc.utils.LetoListsGenerator.main(paramsToPass);
+		else if(app.equals("letoxml")) {
+			prc.utils.LetoListsGenerator.main(params);
 		}
-		else if(toCall.equals("prec2dagen")){
-			prc.utils.Precache2daGen.main(paramsToPass);
+		else if(app.equals("prec2dagen")) {
+			prc.utils.Precache2daGen.main(params);
 		}
-		else if(toCall.equals("scrmrchgen")){
-			prc.utils.ScrollMerchantGen.main(paramsToPass);
+		else if(app.equals("scrmrchgen")) {
+			prc.utils.ScrollMerchantGen.main(params);
 		}
-		else if(toCall.equals("npcevol")){
-			prc.utils.NPCEvolve.main(paramsToPass);
+		else if(app.equals("npcevol")) {
+			prc.utils.NPCEvolve.main(params);
 		}
-		else if(toCall.equals("2damerge")){
-			prc.utils.Data2daMerge.main(paramsToPass);
+		else if(app.equals("2damerge")) {
+			prc.utils.Data2daMerge.main(params);
 		}
-		else if(toCall.equals("blank2da")){
-			prc.utils.Blank2daRows.main(paramsToPass);
+		else if(app.equals("blank2da")) {
+			prc.utils.Blank2daRows.main(params);
 		}
-		else if(toCall.equals("validator")){
-			prc.utils.Validator.main(paramsToPass);
+		else if(app.equals("validator")) {
+			prc.utils.Validator.main(params);
 		}
-		else if(toCall.equals("updatedescrft")){
-			prc.utils.UpdateDes.main(paramsToPass);
+		else if(app.equals("updatedescrft")) {
+			prc.utils.UpdateDes.main(params);
 		}
-		else if(toCall.equals("scrollgen")){
-			prc.utils.ScrollGen.main(paramsToPass);
+		else if(app.equals("scrollgen")) {
+			prc.utils.ScrollGen.main(params);
 		}
-		else if(toCall.equals("buildscrhack")){
-			prc.utils.BuildScrollHack.main(paramsToPass);
+		else if(app.equals("buildscrhack")) {
+			prc.utils.BuildScrollHack.main(params);
 		}
-		else{
-			System.out.println("Unknown class: " + toCall);
+		else {
+			System.out.println("Unknown class: " + app);
 			readMe();
 		}
 	}

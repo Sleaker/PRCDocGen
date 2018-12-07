@@ -2,54 +2,24 @@ package prc.autodoc;
 
 import java.io.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 /**
  * A convenience class for printing errors to both log and System.err
  */
 public class ErrorPrinter {
-	private PrintWriter writer;
-	private boolean isInit = false;
-	
-	/**
-	 * Initializes the ErrorPrinter.
-	 * Attempts to open a log file by name of "errorlog" for writing. If this
-	 * fails, aborts the program.
-	 */
-	private void init()
-	{
-		try{
-			writer = new PrintWriter(new FileOutputStream("errorlog", false), true);
-			isInit = true;
-		}catch(Exception e){
-			System.err.println("Error while creating error logger. Yes, it's ironic. Now debug");
-			e.printStackTrace();
-			System.exit(1);
-		}
-	}
-	
-	
-	/**
-	 * Prints the given string to both stderr and errorlog.
-	 * 
-	 * @param toPrint string to write
-	 */
-	public void print(String toPrint) {
-		if(!isInit)
-			init();
-		writer.print(toPrint);
-		System.err.print(toPrint);
-	}
+	private static Logger LOGGER = LoggerFactory.getLogger(ErrorPrinter.class);
 	
 	/**
 	 * Prints the given string to both stderr and errorlog. In addition, adds
 	 * a line terminator to the end of the string.
 	 * 
-	 * @param toPrint string to write
+	 * @param text string to write
 	 */
-	public void println(String toPrint) {
-		if(!isInit)
-			init();
-		writer.println(toPrint);
-		System.err.println(toPrint);
+	public void println(String text) {
+		LOGGER.error(text);
 	}
 	
 	/**
@@ -58,9 +28,6 @@ public class ErrorPrinter {
 	 * @param e exception to print
 	 */
 	public void printException(Exception e) {
-		if(!isInit)
-			init();
-		e.printStackTrace(System.out);
-		e.printStackTrace(writer);
+		LOGGER.debug("Exception:", e);
 	}
 }
