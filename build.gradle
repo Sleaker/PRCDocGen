@@ -1,0 +1,16 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+repositories {
+    jcenter()
+}
+
+mainClassName = 'prc.Main'
+
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'prc.Main'
+        )
+    }
+}

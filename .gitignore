@@ -1,0 +1,19 @@
+# Gradle Files
+.gradle
+build/
+
+# VS Code Workspace
+.vscode
+.settings
+
+# General Java Files
+*.class
+*.jar
+*.war
+*.zip
+*.ear
+*.nar
+*.rar
+
+*.log
+
