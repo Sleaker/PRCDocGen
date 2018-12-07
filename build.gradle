@@ -11,12 +11,12 @@ dependencies {
     compile 'ch.qos.logback:logback-core:1.2.3'
 }
 
-mainClassName = 'prc.Main'
+mainClassName = 'prc.AppMain'
 
 jar {
     manifest {
         attributes(
-            'Main-Class': 'prc.Main'
+            'Main-Class': 'prc.AppMain'
         )
     }
 }
