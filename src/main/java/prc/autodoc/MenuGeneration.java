@@ -1,16 +1,17 @@
 package prc.autodoc;
 
-//import java.io.*;
-import java.util.*;
-//import java.util.regex.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/* Static import in order to let me use the enum constants in switches */
-import static prc.autodoc.Main.SpellType.*;
+import prc.autodoc.Autodoc.SpellType;
 
-import static prc.Main.*;
-import static prc.autodoc.Main.*;
+import static prc.autodoc.Autodoc.*;
 
-public final class MenuGeneration{
+import java.util.HashMap;
+import java.util.TreeMap;
+
+public final class MenuGeneration {
+	private static Logger LOGGER = LoggerFactory.getLogger(MenuGeneration.class);
 	private MenuGeneration(){/* No instances */}
 
 	/**
@@ -21,7 +22,7 @@ public final class MenuGeneration{
 		TreeMap<String, String> links = new TreeMap<String, String>();
 		StringBuffer toPrint = new StringBuffer();
 
-		if(verbose) System.out.println("Printing menu for " + menuName);
+		LOGGER.info("Printing menu for " + menuName);
 
 		for(GenericEntry entry : entries.values()){
 			links.put(entry.name, menuItemTemplate.replaceAll("~~~TargetPath~~~",
@@ -58,7 +59,7 @@ public final class MenuGeneration{
 		             modSpellPrint   = new StringBuffer();
 		String temp = null;
 
-		if(verbose) System.out.println("Printing spell menus");
+		LOGGER.info("Printing spell menus");
 
 		for(SpellEntry spell : spells.values()){
 			switch(spell.type){
@@ -140,7 +141,7 @@ public final class MenuGeneration{
 	 * page out of the results. Normal and epic feats get their own menus and class feats
 	 * are skipped.
 	 */
-	public static void doFeatMenus(){
+	public static void doFeatMenus() {
 		TreeMap<String, String> normalFeatLinks       = new TreeMap<String, String>(),
 		                        normalMasterfeatLinks = new TreeMap<String, String>(),
 		                        epicFeatLinks         = new TreeMap<String, String>(),
@@ -153,7 +154,7 @@ public final class MenuGeneration{
 		String normalMenu = featMenuTemplate,
 		       epicMenu   = featMenuTemplate;
 
-		if(verbose) System.out.println("Printing feat menus");
+		LOGGER.info("Printing feat menus");
 
 		// Print names
 		normalMenu = normalMenu.replaceAll("~~~menuName~~~", curLanguageData[LANGDATA_FEATSTXT]);
@@ -237,7 +238,7 @@ public final class MenuGeneration{
 		             prestigePrint = new StringBuffer();
 		String temp = null;
 
-		if(verbose) System.out.println("Printing class menus");
+		LOGGER.info("Printing class menus");
 
 		for(ClassEntry clazz : classes.values()){
 			if(clazz.isBase)

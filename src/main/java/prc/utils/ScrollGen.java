@@ -1,13 +1,20 @@
 package prc.utils;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-import prc.autodoc.*;
-import prc.autodoc.Main.TwoDAStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static prc.Main.*;
-import static prc.autodoc.Main.twoDA;
+import prc.autodoc.Data_2da;
+import prc.autodoc.Tuple;
+import prc.autodoc.TwoDAReadException;
+import prc.autodoc.Autodoc.TwoDAStore;
 
 /**
  * Creates scrolls based on iprp_spells.2da and spells.2da.
@@ -15,6 +22,8 @@ import static prc.autodoc.Main.twoDA;
  * @author Ornedan
  */
 public class ScrollGen {
+
+	private static Logger LOGGER = LoggerFactory.getLogger(ScrollGen.class);
 
 	/**
 	 * Ye olde maine methode.
@@ -36,7 +45,7 @@ public class ScrollGen {
 					for(char c : param.substring(1).toCharArray()) {
 						switch(c) {
 						default:
-							System.out.println("Unknown parameter: " + c);
+							LOGGER.error("Unknown parameter: " + c);
 							readMe();
 						}
 					}
@@ -49,7 +58,7 @@ public class ScrollGen {
 				else if(outPath == null)
 					outPath = param;
 				else{
-					System.out.println("Unknown parameter: " + param);
+					LOGGER.error("Unknown parameter: " + param);
 					readMe();
 				}
 			}
@@ -269,7 +278,7 @@ public class ScrollGen {
 			File target = new File(path);
 			// Clean up old version if necessary
 			if(target.exists()){
-				if(verbose) System.out.println("Deleting previous version of " + path);
+				LOGGER.info("Deleting previous version of " + path);
 				target.delete();
 			}
 			target.createNewFile();
@@ -281,7 +290,7 @@ public class ScrollGen {
 			writer.flush();
 			writer.close();
 		} catch(IOException e) {
-			err_pr.println("IOException when printing " + path + ":\n" + e);
+			LOGGER.debug("IOException when printing " + path, e);
 		}
 	}
 	

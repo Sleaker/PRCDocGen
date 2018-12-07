@@ -1,13 +1,19 @@
 package prc.utils;
 
-import static prc.Main.verbose;
 
-import java.util.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Map;
+import java.util.TreeMap;
 
-import prc.autodoc.*;
-import prc.autodoc.Main.TLKStore;
-import prc.autodoc.Main.TwoDAStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import prc.autodoc.Data_2da;
+import prc.autodoc.Autodoc.TLKStore;
+import prc.autodoc.Autodoc.TwoDAStore;
+
 
 /**
  *  A little tool that parses des_crft_scroll, extracts unique item resrefs from it and
@@ -16,6 +22,7 @@ import prc.autodoc.Main.TwoDAStore;
  * @author Heikki 'Ornedan' Aitakangas
  */
 public class ScrollMerchantGen {
+	private static Logger LOGGER = LoggerFactory.getLogger(ScrollMerchantGen.class);
 
 	/**
 	 * Ye olde maine methode.
@@ -23,7 +30,7 @@ public class ScrollMerchantGen {
 	 * @param args         The arguments
 	 * @throws IOException If the writing fails, just die on the exception
 	 */
-	public static void main(String[] args) throws IOException{
+	public static void main(String[] args) throws IOException {
 		if(args.length == 0) readMe();
 		String twoDAPath = null;
 		String tlkPath   = null;
@@ -37,7 +44,7 @@ public class ScrollMerchantGen {
 					for(char c : param.substring(1).toCharArray()) {
 						switch(c) {
 						default:
-							System.out.println("Unknown parameter: " + c);
+							LOGGER.error("Unknown parameter: " + c);
 							readMe();
 						}
 					}
@@ -50,7 +57,7 @@ public class ScrollMerchantGen {
 				else if(tlkPath == null)
 					tlkPath = param;
 				else{
-					System.out.println("Unknown parameter: " + param);
+					LOGGER.error("Unknown parameter: " + param);
 					readMe();
 				}
 			}
@@ -171,10 +178,10 @@ public class ScrollMerchantGen {
 		File target = new File("prc_scrolls.utm.xml");
 		// Clean up old version if necessary
 		if(target.exists()) {
-			if(verbose) System.out.println("Deleting previous version of " + target.getName());
+			LOGGER.info("Deleting previous version of " + target.getName());
 			target.delete();
 		}
-		if(verbose) System.out.println("Writing brand new version of " + target.getName());
+		LOGGER.info("Writing brand new version of " + target.getName());
 		target.createNewFile();
 
 		// Creater the writer and print
@@ -197,14 +204,14 @@ public class ScrollMerchantGen {
 		try {
 			innateLevel = Integer.parseInt(spells2da.getEntry("Innate", rowNum));
 		} catch (NumberFormatException e) {
-			System.err.println("Non-number value in spells.2da Innate column on line " + rowNum + ": " + spells2da.getEntry("Innate", rowNum));
+			LOGGER.debug("Non-number value in spells.2da Innate column on line " + rowNum + ": " + spells2da.getEntry("Innate", rowNum), e);
 			return;
 		}
 		
 		try {
 			tlkRef = Integer.parseInt(spells2da.getEntry("Name", rowNum));
 		} catch (NumberFormatException e) {
-			System.err.println("Non-number value in spells.2da Name column on line " + rowNum + ": " + spells2da.getEntry("Name", rowNum));
+			LOGGER.debug("Non-number value in spells.2da Name column on line " + rowNum + ": " + spells2da.getEntry("Name", rowNum), e);
 			return;
 		}
 		

@@ -1,9 +1,15 @@
 package prc.utils;
 
-import prc.autodoc.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
-import static prc.Main.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import prc.autodoc.Data_2da;
 
 /**
  * Checks the given column in the given 2da for duplicate entries.
@@ -11,7 +17,7 @@ import static prc.Main.*;
  * @author Ornedan
  */
 public class Duplicate2daEntryDetector {
-
+	private static Logger LOGGER = LoggerFactory.getLogger(Duplicate2daEntryDetector.class);
 	private static boolean ignoreCase   = false;
 	private static boolean accountEmpty = false;
 	
@@ -23,7 +29,7 @@ public class Duplicate2daEntryDetector {
 	public static void main(String[] args) {
 		if(args.length == 0) readMe();
 		String filePath = null;
-		ArrayList<String> labels = new ArrayList<String>();
+		List<String> labels = new ArrayList<String>();
 		
 		// parse args
 		for(String param : args){//[--help] | [-i] pathof2da columnlabel+
@@ -60,9 +66,9 @@ public class Duplicate2daEntryDetector {
 		
 		// Test the columns
 		for(String label: labels){
-			TreeMap<String, ArrayList<Integer>> duplicates = new TreeMap<String, ArrayList<Integer>>();
+			Map<String, ArrayList<Integer>> duplicates = new TreeMap<String, ArrayList<Integer>>();
 			// Examine column
-			HashMap<String, Integer> entries = new HashMap<String, Integer>();
+			Map<String, Integer> entries = new HashMap<String, Integer>();
 			String value;
 			for(int i = 0; i < file.getEntryCount(); i++){
 				value = accountForCase(file, label, i);
@@ -95,7 +101,7 @@ public class Duplicate2daEntryDetector {
 					toPrint.append(" " + row);
 				}
 				
-				err_pr.println(toPrint.toString());
+				LOGGER.error(toPrint.toString());
 			}
 		}
 	}

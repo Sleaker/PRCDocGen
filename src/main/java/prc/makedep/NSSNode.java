@@ -1,9 +1,14 @@
 package prc.makedep;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.PrintStream;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
-import static prc.Main.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A node in an NWScript include tree.
@@ -11,6 +16,7 @@ import static prc.Main.*;
  * @author Ornedan
  */
 public class NSSNode {
+	private static Logger LOGGER = LoggerFactory.getLogger(NSSNode.class);
 	private static enum STATES{
 		/**
 		 * This node has not been visited yet in the full linking phase.
@@ -32,24 +38,24 @@ public class NSSNode {
 	 * So, if a circular include is found, it is added here so that this node's includes
 	 * can be added to it's list once the DFS returns to this node.
 	 */
-	private HashSet<NSSNode> mergeLater = new HashSet<NSSNode>();
+	private Set<NSSNode> mergeLater = new HashSet<NSSNode>();
 	
 	/**
 	 * A container for marking files that are already being handled during a merging cascade.
 	 */
-	private static HashSet<NSSNode> inMerge;
+	private static Set<NSSNode> inMerge;
 	
 	/**
 	 * The nodes included directly by this node via #include statements.
 	 */
-	private HashSet<NSSNode> adjenct = new LinkedHashSet<NSSNode>();
+	private Set<NSSNode> adjenct = new LinkedHashSet<NSSNode>();
 	
 	/**
 	 * The nodes included by this node either directly or via intermediary steps. Also,
 	 * each file is considered to include itself in order to make printing include lists
 	 * a bit less complex.
 	 */
-	private HashSet<NSSNode> includes = new LinkedHashSet<NSSNode>();
+	private Set<NSSNode> includes = new LinkedHashSet<NSSNode>();
 	
 	/**
 	 * The first node to call linkFullyAndGetIncludes() on this node.
@@ -71,7 +77,7 @@ public class NSSNode {
 		// Make sure the file exists
 		if(!new File(fileName).exists()){
 			Main.error = true;
-			err_pr.println("Missing script file: " + fileName);
+			LOGGER.error("Missing script file: " + fileName);
 			return;
 		}
 		
@@ -88,21 +94,15 @@ public class NSSNode {
 		// Load the text for this file
 		File file = new File(fileName);
 		char[] cArray = new char[(int)file.length()];
-		try{
+		try {
 			FileReader fr = new FileReader(fileName);
 			fr.read(cArray);
 			fr.close();
-		}catch(Exception e){
-			err_pr.println("Error while reading file: " + fileName);
+		} catch(Exception e) {
+			LOGGER.debug("Error while reading file: " + fileName, e);
 			Main.error = true;
 			return;
 		}
-		
-		/* Debuggage
-		if(fileName.indexOf("psi_inc_psifunc") != -1)
-			System.currentTimeMillis();
-		//*/
-			
 		
 		String[] directIncludes = NWScript.findIncludes(new String(cArray));
 		
@@ -132,7 +132,7 @@ public class NSSNode {
 	 *                WORKING state.
 	 * @return       HashSet containing the fully resolved list of files included by this one
 	 */
-	public HashSet<NSSNode> linkFullyAndGetIncludes(NSSNode caller) {
+	public Set<NSSNode> linkFullyAndGetIncludes(NSSNode caller) {
 		if(state != STATES.UNSTARTED)
 			if(state == STATES.DONE)
 				return includes;
@@ -161,7 +161,7 @@ public class NSSNode {
 		// Initialize the includes list for this script with the direct includes
 		includes.addAll(adjenct);
 		
-		HashSet<NSSNode> temp;
+		Set<NSSNode> temp;
 		for(NSSNode adj : adjenct){
 			temp = adj.linkFullyAndGetIncludes(this);
 			if(temp != null)
@@ -203,15 +203,15 @@ public class NSSNode {
 	public static String getScriptName(String path) {
 		// Cut out the .nss or .ncs
 		try{
-		path = path.substring(0, path.indexOf(".nss") != -1 ? path.indexOf(".nss") : path.indexOf(".ncs"));
-		}catch(Exception e){
-			err_pr.println(path);
+			path = path.substring(0, path.indexOf(".nss") != -1 ? path.indexOf(".nss") : path.indexOf(".ncs"));
+		} catch(Exception e){
+			LOGGER.debug(path, e);
 		}
 		
 		// Cut out the directories, if present
-		if(path.indexOf(File.separator) != -1)
+		if (path.indexOf(File.separator) != -1) {
 			path = path.substring(path.lastIndexOf(File.separator) + 1, path.length());
-		
+		}
 		return path;
 	}
 	

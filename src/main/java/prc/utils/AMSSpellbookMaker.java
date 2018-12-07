@@ -1,16 +1,20 @@
 package prc.utils;
 
-import prc.autodoc.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import java.io.*;
-import java.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-//for the spinner
-import static prc.Main.*;
+import prc.AppMain;
+import prc.autodoc.Data_2da;
+import prc.autodoc.Data_TLK;
 
-/**
- */
+
 public final class AMSSpellbookMaker{
+	private static Logger LOGGER = LoggerFactory.getLogger(AllClassFeatUpdater.class);
 	private AMSSpellbookMaker(){/* Prevent instantiation */}
 
 	private static int spells2daRow = 0;
@@ -106,10 +110,10 @@ public final class AMSSpellbookMaker{
 		getFirstFeat2daRow();
 		getFirstIPRPFeats2daRow();
 		getFirstTlkRow();
-		System.out.println("First free spells.2da row is "     + spells2daRow);
-		System.out.println("First free feat.2da row is "       + feat2daRow);
-		System.out.println("First free iprp_feats.2da row is " + iprp_feats2daRow);
-		System.out.println("First free tlk row is "            + tlkRow);
+		LOGGER.info("First free spells.2da row is "     + spells2daRow);
+		LOGGER.info("First free feat.2da row is "       + feat2daRow);
+		LOGGER.info("First free iprp_feats.2da row is " + iprp_feats2daRow);
+		LOGGER.info("First free tlk row is "            + tlkRow);
 
 		//now process each class in turn
 		for(int classRow = 0; classRow < classes2da.getEntryCount(); classRow++){
@@ -132,7 +136,7 @@ public final class AMSSpellbookMaker{
 					File classSpell2daFile = new File("2das" + File.separator + class_filename_start + classfilename + ".2da");
 					if(!classSpell2daFile.exists())
 					{
-						System.out.println("File " + classSpell2daFile.getPath() + " did not exist, creating");
+						LOGGER.info("File " + classSpell2daFile.getPath() + " did not exist, creating");
 						classSpell2da = new Data_2da(class_filename_start + classfilename, "");
 						classSpell2da.addColumn("Label");
 						classSpell2da.addColumn("Level");
@@ -189,10 +193,6 @@ public final class AMSSpellbookMaker{
 							int spellLevel = classCoreSpell2da.getBiowareEntryAsInt("Level", row);
 							//get the metamagic reference to know what types work
 							int metamagic = spells2da.getBiowareEntryAsInt("Metamagic", spellID);
-							/*	not really necessary
-							if(metamagic == 0)
-								System.out.println("Check metamagic for spell " + spellID);
-							*/
 
 							// Hack - Determine how radial masters there might be: 1 + metamagics
 							int masterCount = 1;
@@ -293,7 +293,7 @@ public final class AMSSpellbookMaker{
 									//check if the metamagic adjusted level is less than the maximum level
 									if((metamagicLevel + spellLevel) <= maxLevel){
 										//debug printout
-										//System.out.println(name+" : "+label);
+										//LOGGER.info(name+" : "+label);
 										addNewSpellbookData(spellID,
 															classfilename,
 															metaScript,
@@ -317,7 +317,7 @@ public final class AMSSpellbookMaker{
 					classSpell2da.save2da("2das", true, true);
 					classFeat2da.save2da("2das", true, true);
 				} else {
-					//System.out.println(classfilename+" does not exist.");
+					//LOGGER.info(classfilename+" does not exist.");
 				}
 			}
 		}
@@ -572,13 +572,13 @@ public final class AMSSpellbookMaker{
 		while(!spells2da.getEntry("Label", spells2daRow).equals(start_label)){
 			spells2daRow++;
 			if(spells2daRow> spells2da.getEntryCount()){
-				System.out.println("Spells.2da reached the end of the file.");
+				LOGGER.error("Spells.2da reached the end of the file.");
 				System.exit(1);
 			}
-			spinner.spin();
+			AppMain.spinner.spin();
 		}
 		spells2daRow++;
-		System.out.println("- Done");
+		LOGGER.info("- Done");
 	}
 	private static void getNextSpells2daRow(){
 		spells2daRow++;
@@ -588,17 +588,17 @@ public final class AMSSpellbookMaker{
 	}
 
 	private static void getFirstFeat2daRow(){
-		System.out.print("Finding start of feat.2da ");
+		LOGGER.info("Finding start of feat.2da ");
 		while(!feat2da.getEntry("Label", feat2daRow).equals(start_label)){
 			feat2daRow++;
 			if(feat2daRow> feat2da.getEntryCount()){
-				System.out.println("Feat.2da reached the end of the file.");
+				LOGGER.error("Feat.2da reached the end of the file.");
 				System.exit(1);
 			}
-			spinner.spin();
+			AppMain.spinner.spin();
 		}
 		feat2daRow++;
-		System.out.println("- Done");
+		LOGGER.info("- Done");
 	}
 	private static void getNextFeat2daRow(){
 		feat2daRow++;
@@ -608,17 +608,17 @@ public final class AMSSpellbookMaker{
 	}
 
 	private static void getFirstIPRPFeats2daRow(){
-		System.out.print("Finding start of iprp_spells.2da ");
+		LOGGER.info("Finding start of iprp_spells.2da ");
 		while(!iprp_feats2da.getEntry("Label", iprp_feats2daRow).equals(start_label)){
 			iprp_feats2daRow++;
 			if(iprp_feats2daRow> iprp_feats2da.getEntryCount()){
-				System.out.println("iprp_feats.2da reached the end of the file.");
+				LOGGER.error("iprp_feats.2da reached the end of the file.");
 				System.exit(1);
 			}
-			spinner.spin();
+			AppMain.spinner.spin();
 		}
 		iprp_feats2daRow++;
-		System.out.println("- Done");
+		LOGGER.info("- Done");
 	}
 	private static void getNextIPRPFeats2daRow(){
 		iprp_feats2daRow++;
@@ -629,17 +629,17 @@ public final class AMSSpellbookMaker{
 
 	private static void getFirstClassFeat2daRow(){
 		classFeatRow = 0;
-		System.out.print("Finding start of cls_feat_*.2da ");
+		LOGGER.info("Finding start of cls_feat_*.2da ");
 		while(!classFeat2da.getEntry("FeatLabel", classFeatRow).equals(start_label)){
 			classFeatRow++;
 			if(classFeatRow >= classFeat2da.getEntryCount()){
-				System.out.println("cls_feat_*.2da reached the end of the file.");
+				LOGGER.error("cls_feat_*.2da reached the end of the file.");
 				System.exit(1);
 			}
-			spinner.spin();
+			AppMain.spinner.spin();
 		}
 		getNextClassFeat2daRow();
-		System.out.println("- Done");
+		LOGGER.info("- Done");
 	}
 	private static void getNextClassFeat2daRow(){
 		classFeatRow++;
@@ -652,7 +652,7 @@ public final class AMSSpellbookMaker{
 		System.out.print("Finding start of prc_consortium.tlk ");
 		while(!customtlk.getEntry(tlkRow).equals(start_label)){
 			tlkRow++;
-			spinner.spin();
+			AppMain.spinner.spin();
 		}
 		tlkRow++;
 		System.out.println("- Done");

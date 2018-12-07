@@ -1,10 +1,15 @@
 package prc.utils;
 
-import prc.autodoc.*;
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileFilter;
+import java.util.HashSet;
+import java.util.Set;
 
-import static prc.Main.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import prc.autodoc.Data_2da;
+
 
 /**
  * A class that parses 2das and determines which rows need to be
@@ -13,6 +18,8 @@ import static prc.Main.*;
  * @author Heikki 'Ornedan' Aitakangas
  */
 public class Precache2daGen {
+	private static Logger LOGGER = LoggerFactory.getLogger(Precache2daGen.class);
+
 	private static String path2daDir = null;
 	private static Data_2da output   = new Data_2da("precacherows");
 	static {
@@ -41,7 +48,7 @@ public class Precache2daGen {
 					try {
 						normalSpellMaxRow = Integer.parseInt(args[++i]);
 					} catch(NumberFormatException e) {
-						err_pr.println("Invalid number given with parameter --normalspellsmax");
+						LOGGER.error("Invalid number given with parameter --normalspellsmax");
 						readMe();
 					}
 				}
@@ -49,7 +56,7 @@ public class Precache2daGen {
 					for(char c : param.substring(1).toCharArray()){
 						switch(c){
 						default:
-							System.out.println("Unknown parameter: " + c);
+							LOGGER.error("Unknown parameter: " + c);
 							readMe();
 						}
 					}
@@ -68,7 +75,7 @@ public class Precache2daGen {
 		// Load a directory listing
 		File dir = new File(path2daDir);
 		if(!dir.isDirectory()) {
-			err_pr.println("Not a directory: " + path2daDir);
+			LOGGER.error("Not a directory: " + path2daDir);
 			System.exit(1);
 		}
 
@@ -359,7 +366,7 @@ public class Precache2daGen {
 		}
 
 		if(begin == -1 || end == -1) {
-			err_pr.println("Missing a new spellbook reserve marker");
+			LOGGER.error("Missing a new spellbook reserve marker");
 			System.exit(1);
 		}
 

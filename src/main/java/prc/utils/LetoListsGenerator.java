@@ -1,9 +1,16 @@
 package prc.utils;
 
-import static prc.Main.err_pr;
-import prc.autodoc.*;
-import java.io.*;
-import java.util.*;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import prc.autodoc.Data_2da;
+import prc.autodoc.Data_TLK;
 
 /**
  * A class for generating Leto XML files from 2da and TLK.
@@ -11,6 +18,7 @@ import java.util.*;
  * @author Ornedan
  */
 public final class LetoListsGenerator {
+	private static Logger LOGGER = LoggerFactory.getLogger(LetoListsGenerator.class);
 	private final Data_TLK defaultTLK;
 	private final Data_TLK userTLK;
 
@@ -71,8 +79,8 @@ public final class LetoListsGenerator {
 		if(args.length == 0) readMe();
 		String defaultTLKPath = null;
 		String userTLKPath = null;
-		ArrayList<String> twoDANames = new ArrayList<String>();
-		ArrayList<String> columnNames = new ArrayList<String>();
+		List<String> twoDANames = new ArrayList<String>();
+		List<String> columnNames = new ArrayList<String>();
 
 		for(String param : args){//[-crmnqs] file... | -
 			// Parameter parseage
@@ -83,7 +91,7 @@ public final class LetoListsGenerator {
 						switch(c){
 
 						default:
-							err_pr.println("Unknown parameter: " + c);
+							LOGGER.error("Unknown parameter: " + c);
 							readMe();
 						}
 					}
@@ -104,7 +112,7 @@ public final class LetoListsGenerator {
 		}
 
 		if(defaultTLKPath == null || userTLKPath == null || twoDANames.size() != columnNames.size()){
-			System.err.println("Error! Missing parameters");
+			LOGGER.error("Error! Missing parameters");
 			readMe();
 		}
 

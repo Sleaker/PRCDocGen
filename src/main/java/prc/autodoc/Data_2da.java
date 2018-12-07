@@ -1,23 +1,37 @@
 package prc.autodoc;
 
-import java.io.*;
-import java.util.*;
-import java.util.regex.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import static prc.Main.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import prc.AppMain;
 
 /**
- * This class forms an interface for accessing 2da files in the
- * PRC automated manual generator.
+ * This class forms an interface for accessing 2da files in the PRC automated
+ * manual generator.
  */
 public class Data_2da implements Cloneable {
+	private static Logger LOGGER = LoggerFactory.getLogger(Data_2da.class);
+
 	// String matching pattern. Gets a block of non-whitespace (tab is not counted as whitespace here) that does not contain any " OR " followed by any characters until the next "
 	private static Pattern pattern = Pattern.compile("[[\\S&&[^\"]][\t]]+|\"[^\"]+\"");
 	// Same as the above, but counts tab as whitespace. Bug-compatibility with BioWare's own violations of 2da spec
 	private static Pattern bugCompatPattern = Pattern.compile("[\\S&&[^\"]]+|\"[^\"]+\"");
 	//private static Matcher matcher = pattern.matcher("");
 
-	private LinkedHashMap<String, ArrayList<String>> mainData = new LinkedHashMap<String, ArrayList<String>>();
+	private Map<String, ArrayList<String>> mainData = new LinkedHashMap<String, ArrayList<String>>();
 	//private int entries = 0;
 	private String name;
 	private String defaultValue;
@@ -58,7 +72,7 @@ public class Data_2da implements Cloneable {
 	 * @param realLabels   the labels with original case
 	 * @param mainData     the contents
 	 */
-	public Data_2da(String name, String defaultValue, ArrayList<String> realLabels, LinkedHashMap<String, ArrayList<String>> mainData){
+	public Data_2da(String name, String defaultValue, ArrayList<String> realLabels, LinkedHashMap<String, ArrayList<String>> mainData) {
 		this.name = name;
 		this.defaultValue = defaultValue;
 		this.realLabels = realLabels;
@@ -76,7 +90,7 @@ public class Data_2da implements Cloneable {
 	 *                         If <code>false</code> and in the same situation, an IOException is
 	 *                         thrown.
 	 */
-	public void save2da(String path) throws IOException{
+	public void save2da(String path) throws IOException {
 		save2da(path, false, false);
 	}
 
@@ -107,7 +121,7 @@ public class Data_2da implements Cloneable {
 			throw new IOException("File exists already: " + file.getAbsolutePath());
 
 		// Inform user
-		if(verbose) System.out.print("Saving 2da file: " + name + " ");
+		LOGGER.info("Saving 2da file: " + name + " ");
 
 		FileWriter fw = new FileWriter(file, false);
 		String[] labels = this.getLabels();
@@ -116,7 +130,7 @@ public class Data_2da implements Cloneable {
 		// Get the amount of padding used, if any
 		int[] widths = new int[labels.length + 1];// All initialised to 0
 		if(evenColumns){
-			ArrayList<String> column;
+			List<String> column;
 			int pad;
 			// Loop over columns
 			for(int i = 0; i < labels.length; i++){
@@ -172,13 +186,13 @@ public class Data_2da implements Cloneable {
 			}
 			fw.write((TLKEditCompatible ? " ":"") + CRLF);
 
-			if(verbose) spinner.spin();
+			AppMain.spinner.spin();
 		}
 
 		fw.flush();
 		fw.close();
 
-		if(verbose) System.out.println("- Done");
+		LOGGER.info("Done");
 	}
 
 	/**
@@ -230,7 +244,7 @@ public class Data_2da implements Cloneable {
 		//toReturn = new Data_2da(baseFile.getName().substring(0, baseFile.getName().length() - 4));
 
 		// Tell the user what we are doing
-		if(verbose) System.out.print("Reading 2da file: " + name + " ");
+		LOGGER.info("Reading 2da file: " + name + " ");
 
 		// Create a Scanner for reading the 2da
 		Scanner reader = null;
@@ -243,7 +257,7 @@ public class Data_2da implements Cloneable {
 			//reader = new Scanner(baseFile);
 			reader = new Scanner(new String(bytebuf));
 		} catch(Exception e) {
-			err_pr.println("File operation failed. Aborting.\nException data:\n" + e);
+			LOGGER.debug("File operation failed. Aborting.", e);
 			System.exit(1);
 		}
 
@@ -270,7 +284,7 @@ public class Data_2da implements Cloneable {
 			reader.close();
 		}
 
-		if(verbose) System.out.println("- Done");
+		LOGGER.info("Done");
 		return toReturn;
 	}
 
@@ -412,7 +426,7 @@ public class Data_2da implements Cloneable {
 			else
 				break;
 
-			if(verbose) spinner.spin();
+			AppMain.spinner.spin();
 		}
 
 		// Some validity checking on the 2da. Empty rows allowed only in the end
@@ -487,7 +501,7 @@ public class Data_2da implements Cloneable {
 	 *  if the column is **** then a zero length string will be returned
 	 */
 	public int getBiowareEntryAsInt(String label, int row){
-		ArrayList<String> column = mainData.get(label.toLowerCase());
+		List<String> column = mainData.get(label.toLowerCase());
 		String returnString = column != null ? column.get(row) : null;
 		if(returnString.equals("****"))
 			return 0;
@@ -524,7 +538,7 @@ public class Data_2da implements Cloneable {
 	 *  if the column is **** then a zero length string will be returned
 	 */
 	public String getBiowareEntry(String label, int row){
-		ArrayList<String> column = mainData.get(label.toLowerCase());
+		List<String> column = mainData.get(label.toLowerCase());
 		String returnString = column != null ? column.get(row) : null;
 		if(returnString.equals("****"))
 		    return "";
@@ -554,7 +568,7 @@ public class Data_2da implements Cloneable {
 	 * @return String represeting the 2da entry or <code>null</code> if the column does not exist
 	 */
 	public String getEntry(String label, int row){
-		ArrayList<String> column = mainData.get(label.toLowerCase());
+		List<String> column = mainData.get(label.toLowerCase());
 		return column != null ? column.get(row) : null;
 	}
 
@@ -848,13 +862,12 @@ public class Data_2da implements Cloneable {
 							ignoreErrors = true;
 							break;
 						case 'q':
-							verbose = false;
 							break;
 						case 's':
-							spinner.disable();
+							AppMain.spinner.disable();
 							break;
 						default:
-							err_pr.println("Unknown parameter: " + c);
+							LOGGER.error("Unknown parameter: " + c);
 							readMe();
 						}
 					}
@@ -893,7 +906,7 @@ public class Data_2da implements Cloneable {
 					temp.save2da(new File(fileName).getCanonicalFile().getParent() + File.separator, true, !minimal);
 				}catch(Exception e){
 					// Print the error
-					err_pr.printException(e);
+					LOGGER.debug("Failed to resave data: ", e);
 					// If ignoring errors, and this error is of expected type, continue
 					if(e instanceof IllegalArgumentException ||
 					   e instanceof TwoDAReadException ||
@@ -906,12 +919,12 @@ public class Data_2da implements Cloneable {
 		}
 		else{
 			// Validify by loading
-			for(String fileName : fileNames){
-				try{
+			for(String fileName : fileNames) {
+				try {
 					load2da(fileName, bugCompat);
-				}catch(Exception e){
+				} catch(Exception e) {
 					// Print the error
-					err_pr.printException(e);
+					LOGGER.debug("Failed to load file: " + fileName, e);
 					// If ignoring errors, and this error is of expected type, continue
 					if(e instanceof IllegalArgumentException || e instanceof TwoDAReadException)
 						if(ignoreErrors)
@@ -1007,7 +1020,7 @@ public class Data_2da implements Cloneable {
 
 		// Get the amount of padding used, if any
 		int[] widths = new int[labels.length + 1];// All initialised to 0
-		ArrayList<String> column;
+		List<String> column;
 		int pad;
 		// Loop over columns
 		for(int i = 0; i < labels.length; i++){

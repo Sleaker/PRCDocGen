@@ -2,10 +2,14 @@ package prc.autodoc;
 
 import java.util.*;
 
-import static prc.Main.*;
-import static prc.autodoc.Main.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static prc.autodoc.Autodoc.*;
 
 public final class PageGeneration{
+	private static Logger LOGGER = LoggerFactory.getLogger(PageGeneration.class);
+
 	private PageGeneration() { 
 
 	}
@@ -17,7 +21,7 @@ public final class PageGeneration{
 		String text = null;
 
 		for (GenericEntry skill : skills.values()) {
-			if(verbose) System.out.println("Printing page for " + skill.name);
+			LOGGER.info("Printing page for " + skill.name);
 			// Start building the entry data. First, place in the name
 			text = skillTemplate;
 			text = text.replaceAll("~~~SkillName~~~", skill.name);
@@ -31,7 +35,7 @@ public final class PageGeneration{
 			try {
 				printPage(skill.filePath, text);
 			} catch(PageGenerationException e) {
-				err_pr.println("Exception when writing page for skill " + skill.entryNum + ": " + skill.name + ":\n" + e);
+				LOGGER.debug("Exception when writing page for skill " + skill.entryNum + ": " + skill.name, e);
 			}
 		}
 		System.gc();
@@ -44,7 +48,7 @@ public final class PageGeneration{
 		String text = null;
 
 		for(GenericEntry craft_armour_var : craft_armour.values()) {
-			if(verbose) System.out.println("Printing page for " + craft_armour_var.name);
+			LOGGER.info("Printing page for " + craft_armour_var.name);
 			// Start building the entry data. First, place in the name
 			text = craftTemplate;
 			text = text.replaceAll("~~~CraftPropName~~~", craft_armour_var.name);
@@ -55,11 +59,11 @@ public final class PageGeneration{
 			try {
 				printPage(craft_armour_var.filePath, text);
 			} catch(PageGenerationException e) {
-				err_pr.println("Exception when writing page for skill " + craft_armour_var.entryNum + ": " + craft_armour_var.name + ":\n" + e);
+				LOGGER.debug("Exception when writing page for skill " + craft_armour_var.entryNum + ": " + craft_armour_var.name, e);
 			}
 		}
 		for(GenericEntry craft_weapon_var : craft_weapon.values()) {
-			if(verbose) System.out.println("Printing page for " + craft_weapon_var.name);
+			LOGGER.info("Printing page for " + craft_weapon_var.name);
 			// Start building the entry data. First, place in the name
 			text = craftTemplate;
 			text = text.replaceAll("~~~CraftPropName~~~", craft_weapon_var.name);
@@ -70,11 +74,11 @@ public final class PageGeneration{
 			try {
 				printPage(craft_weapon_var.filePath, text);
 			} catch(PageGenerationException e) {
-				err_pr.println("Exception when writing page for skill " + craft_weapon_var.entryNum + ": " + craft_weapon_var.name + ":\n" + e);
+				LOGGER.debug("Exception when writing page for skill " + craft_weapon_var.entryNum + ": " + craft_weapon_var.name, e);
 			}
 		}
 		for(GenericEntry craft_ring_var : craft_ring.values()) {
-			if(verbose) System.out.println("Printing page for " + craft_ring_var.name);
+			LOGGER.info("Printing page for " + craft_ring_var.name);
 			// Start building the entry data. First, place in the name
 			text = craftTemplate;
 			text = text.replaceAll("~~~CraftPropName~~~", craft_ring_var.name);
@@ -85,11 +89,11 @@ public final class PageGeneration{
 			try {
 				printPage(craft_ring_var.filePath, text);
 			} catch(PageGenerationException e) {
-				err_pr.println("Exception when writing page for skill " + craft_ring_var.entryNum + ": " + craft_ring_var.name + ":\n" + e);
+				LOGGER.debug("Exception when writing page for skill " + craft_ring_var.entryNum + ": " + craft_ring_var.name, e);
 			}
 		}
 		for(GenericEntry craft_wondrous_var : craft_wondrous.values()) {
-			if(verbose) System.out.println("Printing page for " + craft_wondrous_var.name);
+			LOGGER.info("Printing page for " + craft_wondrous_var.name);
 			// Start building the entry data. First, place in the name
 			text = craftTemplate;
 			text = text.replaceAll("~~~CraftPropName~~~", craft_wondrous_var.name);
@@ -100,7 +104,7 @@ public final class PageGeneration{
 			try {
 				printPage(craft_wondrous_var.filePath, text);
 			} catch(PageGenerationException e) {
-				err_pr.println("Exception when writing page for skill " + craft_wondrous_var.entryNum + ": " + craft_wondrous_var.name + ":\n" + e);
+				LOGGER.debug("Exception when writing page for skill " + craft_wondrous_var.entryNum + ": " + craft_wondrous_var.name, e);
 			}
 		}
 		System.gc();
@@ -117,7 +121,7 @@ public final class PageGeneration{
 		StringBuilder subradialText = null;
 
 		for(SpellEntry spell : spells.values()) {
-			if(verbose) System.out.println("Printing page for " + spell.name);
+			LOGGER.info("Printing page for " + spell.name);
 			// Start building the entry data. First, place in the name
 			text = spellTemplate;
 			text = text.replaceAll("~~~SpellName~~~", spell.name);
@@ -142,7 +146,7 @@ public final class PageGeneration{
 			try {
 				printPage(spell.filePath, text);
 			} catch(PageGenerationException e) {
-				err_pr.println("Exception when writing page for spell " + spell.entryNum + ": " + spell.name + ":\n" + e);
+				LOGGER.debug("Exception when writing page for spell " + spell.entryNum + ": " + spell.name, e);
 			}
 		}
 		// Force a clean-up of dead objects. This will keep discarded objects from slowing down the program as it
@@ -176,7 +180,7 @@ public final class PageGeneration{
 		       temp = null;
 
 		for(FeatEntry masterfeat : masterFeats.values()) {
-			if(verbose) System.out.println("Printing page for " + masterfeat.name);
+			LOGGER.info("Printing page for " + masterfeat.name);
 			// Build the entry data
 			text = mFeatTemplate;
 			text = text.replaceAll("~~~FeatName~~~",
@@ -198,7 +202,7 @@ public final class PageGeneration{
 			try {
 				printPage(masterfeat.filePath, text);
 			} catch(PageGenerationException e) {
-				err_pr.println("Exception when writing page for masterfeat " + masterfeat.entryNum + ": " + masterfeat.name + ":\n" + e);
+				LOGGER.debug("Exception when writing page for masterfeat " + masterfeat.entryNum + ": " + masterfeat.name, e);
 			}
 		}
 		System.gc();
@@ -214,7 +218,7 @@ public final class PageGeneration{
 		StringBuilder subradialText = null;
 
 		for(FeatEntry feat : feats.values()) {
-			if(verbose) System.out.println("Printing page for " + feat.name);
+			LOGGER.info("Printing page for " + feat.name);
 			// Build the entry data
 			text = featTemplate;
 			text = text.replaceAll("~~~FeatName~~~",
@@ -274,7 +278,7 @@ public final class PageGeneration{
 			try {
 				printPage(feat.filePath, text);
 			} catch(PageGenerationException e) {
-				err_pr.println("Exception when writing page for feat " + feat.entryNum + ": " + feat.name + ":\n" + e);
+				LOGGER.debug("Exception when writing page for feat " + feat.entryNum + ": " + feat.name, e);
 			}
 		}
 		System.gc();
@@ -336,7 +340,7 @@ public final class PageGeneration{
 		StringBuffer spellList = null;
 
 		for(DomainEntry domain : domains.values()) {
-			if(verbose) System.out.println("Printing page for " + domain.name);
+			LOGGER.info("Printing page for " + domain.name);
 			// Build the entry data
 			text = domainTemplate;
 			text = text.replaceAll("~~~DomainName~~~",
@@ -363,7 +367,7 @@ public final class PageGeneration{
 			try {
 				printPage(domain.filePath, text);
 			} catch(PageGenerationException e) {
-				err_pr.println("Exception when writing page for domain " + domain.entryNum + ": " + domain.name + ":\n" + e);
+				LOGGER.debug("Exception when writing page for domain " + domain.entryNum + ": " + domain.name, e);
 			}
 		}
 		System.gc();
@@ -378,7 +382,7 @@ public final class PageGeneration{
 		StringBuffer featList = null;
 
 		for(RaceEntry race : races.values()) {
-			if(verbose) System.out.println("Printing page for " + race.name);
+			LOGGER.info("Printing page for " + race.name);
 			// Build the entry data
 			text = raceTemplate;
 			text = text.replaceAll("~~~RaceName~~~",
@@ -398,7 +402,7 @@ public final class PageGeneration{
 			try {
 				printPage(race.filePath, text);
 			} catch(PageGenerationException e) {
-				err_pr.println("Exception when writing page for race " + race.entryNum + ": " + race.name + ":\n" + e);
+				LOGGER.debug("Exception when writing page for race " + race.entryNum + ": " + race.name, e);
 			}
 		}
 		System.gc();
@@ -415,7 +419,7 @@ public final class PageGeneration{
 		String[] tempArr = null;
 
 		for(ClassEntry class_ : classes.values()) {
-			if(verbose) System.out.println("Printing page for " + class_.name);
+			LOGGER.info("Printing page for " + class_.name);
 			// Build the entry data
 			text = classTemplate;
 			text = text.replaceAll("~~~ClassName~~~",
@@ -442,7 +446,7 @@ public final class PageGeneration{
 			try {
 				printPage(class_.filePath, text);
 			} catch(PageGenerationException e) {
-				err_pr.println("Exception when writing page for class " + class_.entryNum + ": " + class_.name + ":\n" + e);
+				LOGGER.debug("Exception when writing page for class " + class_.entryNum + ": " + class_.name, e);
 			}
 		}
 		System.gc();

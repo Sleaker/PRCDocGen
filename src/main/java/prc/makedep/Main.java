@@ -1,9 +1,11 @@
 package prc.makedep;
 
 import java.util.*;
-import java.io.*;
 
-import static prc.Main.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.*;
 
 
 /**
@@ -21,6 +23,7 @@ import static prc.Main.*;
  */
 public class Main {
 
+	private static Logger LOGGER = LoggerFactory.getLogger(Main.class);
 	static Map<String, NSSNode> scripts = new LinkedHashMap<String, NSSNode>();
 	
 	protected static boolean append = false,
@@ -100,7 +103,7 @@ public class Main {
 			try {
 				scan = new Scanner(targetListFile);
 			} catch (FileNotFoundException e) {
-				err_pr.println("Could not find file: " + fileName);
+				LOGGER.error("Could not find file: " + fileName);
 				error = true;
 				continue;
 			}
@@ -115,12 +118,12 @@ public class Main {
 		
 		// Input sanity checks
 		if(targetList.size() == 0) {
-			err_pr.println("No targets specified.");
+			LOGGER.error("No targets specified.");
 			error = true;
 		}
 		for(String target : targetList.keySet()) {
 			if(scripts.get(target.toLowerCase()) == null) {
-				err_pr.println("Script file for target " + target + " not found in given source directories.");
+				LOGGER.error("Script file for target " + target + " not found in given source directories.");
 				error = true;
 			}
 		}
@@ -192,7 +195,7 @@ public class Main {
 				if(!scripts.containsKey(temp))
 					scripts.put(temp, new NSSNode(file.getPath()));
 				else{
-					err_pr.println("Duplicate script file: " + temp);
+					LOGGER.error("Duplicate script file: " + temp);
 					error = true;
 				}
 			}
@@ -210,7 +213,7 @@ public class Main {
 		try{
 			oStrm = new PrintStream(new FileOutputStream(outFileName, append), true);
 		}catch(FileNotFoundException e){
-			err_pr.println("Missing output file " + outFileName + "\nTerminating!");
+			LOGGER.error("Missing output file " + outFileName + "\nTerminating!");
 			System.exit(1);
 		}
 	}

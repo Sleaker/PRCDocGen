@@ -3,14 +3,12 @@ package prc.autodoc;
 import java.io.*;
 import java.util.*;
 
-import prc.autodoc.Main.SpellType;
-//import java.util.regex.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/* Static import in order to let me use the enum constants in switches */
-import static prc.autodoc.Main.SpellType.*;
+import prc.autodoc.Autodoc.SpellType;
 
-import static prc.Main.*;
-import static prc.autodoc.Main.*;
+import static prc.autodoc.Autodoc.*;
 
 /**
  * This class contains the methods for generation of the raw manual page contents.
@@ -18,6 +16,8 @@ import static prc.autodoc.Main.*;
  * @author Ornedan
  */
 public class EntryGeneration {
+
+	private static Logger LOGGER = LoggerFactory.getLogger(EntryGeneration.class);
 	/**
 	 * Handles creation of the skill pages.
 	 */
@@ -36,9 +36,9 @@ public class EntryGeneration {
 			errored = false;
 			// Get the name of the skill and check if it's valid
 			name = tlk.get(skills2da.getEntry("Name", i));
-			if(verbose) System.out.println("Generating entry data for " + name);
+			LOGGER.info("Generating entry data for " + name);
 			if(name.equals(badStrRef)) {
-				err_pr.println("Invalid name for skill " + i);
+				LOGGER.error("Invalid name for skill " + i);
 				errored = true;
 			}
 
@@ -46,14 +46,14 @@ public class EntryGeneration {
 			text = htmlizeTLK(tlk.get(skills2da.getEntry("Description", i)));
 			// Again, check if we had a valid description
 			if(tlk.get(skills2da.getEntry("Description", i)).equals(badStrRef)) {
-				err_pr.println("Invalid description for skill " + i + ": " + name);
+				LOGGER.error("Invalid description for skill " + i + ": " + name);
 				errored = true;
 			}
 
 			// And icon
 			icon = skills2da.getEntry("Icon", i);
 			if(icon.equals("****")) {
-				err_pr.println("Icon not defined for skill " + i + ": " + name);
+				LOGGER.error("Icon not defined for skill " + i + ": " + name);
 				errored = true;
 			}
 			icon = Icons.buildIcon(icon);
@@ -66,7 +66,7 @@ public class EntryGeneration {
 				// Store a data structure represeting the skill into a hashmap
 				skills.put(i, new GenericEntry(name, text, icon, path, i));
 			} else
-				err_pr.println("Failed to generate entry for skill " + i + ": " + name);
+				LOGGER.error("Failed to generate entry for skill " + i + ": " + name);
 		}
 		// Force a clean-up of dead objects. This will keep discarded objects from slowing down the program as it
 		// hits the memory limit
@@ -100,9 +100,9 @@ public class EntryGeneration {
 			errored = false;
 			// Get the name of the skill and check if it's valid
 			name = tlk.get(craft_armour_2da.getEntry("Name", i));
-			if(verbose) System.out.println("Generating entry data for " + name);
+			LOGGER.info("Generating entry data for " + name);
 			if(name.equals(badStrRef)) {
-				err_pr.println("Invalid name for property " + i);
+				LOGGER.error("Invalid name for property " + i);
 				errored = true;
 			}
 
@@ -110,7 +110,7 @@ public class EntryGeneration {
 			text = htmlizeTLK(tlk.get(craft_armour_2da.getEntry("Description", i)));
 			// Again, check if we had a valid description
 			if(tlk.get(craft_armour_2da.getEntry("Description", i)).equals(badStrRef)) {
-				err_pr.println("Invalid description for property " + i + ": " + name);
+				LOGGER.error("Invalid description for property " + i + ": " + name);
 				errored = true;
 			}
 
@@ -122,16 +122,16 @@ public class EntryGeneration {
 				// Store a data structure represeting the skill into a hashmap
 				craft_armour.put(i, new GenericEntry(name, text, icon, path, i));
 			} else
-				err_pr.println("Failed to generate entry for property " + i + ": " + name);
+				LOGGER.error("Failed to generate entry for property " + i + ": " + name);
 		}
 
 		for(int i = 0; i < craft_weapon_2da.getEntryCount(); i++) {
 			errored = false;
 			// Get the name of the skill and check if it's valid
 			name = tlk.get(craft_weapon_2da.getEntry("Name", i));
-			if(verbose) System.out.println("Generating entry data for " + name);
+			LOGGER.info("Generating entry data for " + name);
 			if(name.equals(badStrRef)) {
-				err_pr.println("Invalid name for property " + i);
+				LOGGER.error("Invalid name for property " + i);
 				errored = true;
 			}
 
@@ -139,7 +139,7 @@ public class EntryGeneration {
 			text = htmlizeTLK(tlk.get(craft_weapon_2da.getEntry("Description", i)));
 			// Again, check if we had a valid description
 			if(tlk.get(craft_weapon_2da.getEntry("Description", i)).equals(badStrRef)) {
-				err_pr.println("Invalid description for property " + i + ": " + name);
+				LOGGER.error("Invalid description for property " + i + ": " + name);
 				errored = true;
 			}
 
@@ -151,16 +151,16 @@ public class EntryGeneration {
 				// Store a data structure represeting the skill into a hashmap
 				craft_weapon.put(i, new GenericEntry(name, text, icon, path, i));
 			} else
-				err_pr.println("Failed to generate entry for property " + i + ": " + name);
+				LOGGER.error("Failed to generate entry for property " + i + ": " + name);
 		}
 
 		for(int i = 0; i < craft_ring_2da.getEntryCount(); i++) {
 			errored = false;
 			// Get the name of the skill and check if it's valid
 			name = tlk.get(craft_ring_2da.getEntry("Name", i));
-			if(verbose) System.out.println("Generating entry data for " + name);
+			LOGGER.info("Generating entry data for " + name);
 			if(name.equals(badStrRef)) {
-				err_pr.println("Invalid name for property " + i);
+				LOGGER.error("Invalid name for property " + i);
 				errored = true;
 			}
 
@@ -168,7 +168,7 @@ public class EntryGeneration {
 			text = htmlizeTLK(tlk.get(craft_ring_2da.getEntry("Description", i)));
 			// Again, check if we had a valid description
 			if(tlk.get(craft_ring_2da.getEntry("Description", i)).equals(badStrRef)) {
-				err_pr.println("Invalid description for property " + i + ": " + name);
+				LOGGER.error("Invalid description for property " + i + ": " + name);
 				errored = true;
 			}
 
@@ -180,16 +180,16 @@ public class EntryGeneration {
 				// Store a data structure represeting the skill into a hashmap
 				craft_ring.put(i, new GenericEntry(name, text, icon, path, i));
 			} else
-				err_pr.println("Failed to generate entry for property " + i + ": " + name);
+				LOGGER.error("Failed to generate entry for property " + i + ": " + name);
 		}
 
 		for(int i = 0; i < craft_wondrous_2da.getEntryCount(); i++) {
 			errored = false;
 			// Get the name of the skill and check if it's valid
 			name = tlk.get(craft_wondrous_2da.getEntry("Name", i));
-			if(verbose) System.out.println("Generating entry data for " + name);
+			LOGGER.info("Generating entry data for " + name);
 			if(name.equals(badStrRef)) {
-				err_pr.println("Invalid name for property " + i);
+				LOGGER.error("Invalid name for property " + i);
 				errored = true;
 			}
 
@@ -197,7 +197,7 @@ public class EntryGeneration {
 			text = htmlizeTLK(tlk.get(craft_wondrous_2da.getEntry("Description", i)));
 			// Again, check if we had a valid description
 			if(tlk.get(craft_wondrous_2da.getEntry("Description", i)).equals(badStrRef)) {
-				err_pr.println("Invalid description for property " + i + ": " + name);
+				LOGGER.error("Invalid description for property " + i + ": " + name);
 				errored = true;
 			}
 
@@ -209,7 +209,7 @@ public class EntryGeneration {
 				// Store a data structure represeting the skill into a hashmap
 				craft_wondrous.put(i, new GenericEntry(name, text, icon, path, i));
 			} else
-				err_pr.println("Failed to generate entry for property " + i + ": " + name);
+				LOGGER.error("Failed to generate entry for property " + i + ": " + name);
 		}
 		// Force a clean-up of dead objects. This will keep discarded objects from slowing down the program as it
 		// hits the memory limit
@@ -241,29 +241,29 @@ public class EntryGeneration {
 		boolean errored;
 		int subRadial;
 
-		SpellType spelltype = NONE;
+		SpellType spelltype = SpellType.NONE;
 
 		spells = new HashMap<Integer, SpellEntry>();
 		Data_2da spells2da = twoDA.get("spells");
 
 		for(int i = 0; i < spells2da.getEntryCount(); i++) {
-			spelltype = NONE;
+			spelltype = SpellType.NONE;
 			errored = false;
 
-			if     (isNormalSpell      (spells2da, i)) spelltype = NORMAL;
-			else if(isEpicSpell        (spells2da, i)) spelltype = EPIC;
-			else if(isPsionicPower     (spells2da, i)) spelltype = PSIONIC;
-			else if(isTruenameUtterance(spells2da, i)) spelltype = UTTERANCE;
-			else if(isInvocation       (spells2da, i)) spelltype = INVOCATION;
-			else if(isManeuver         (spells2da, i)) spelltype = MANEUVER;
+			if     (isNormalSpell      (spells2da, i)) spelltype = SpellType.NORMAL;
+			else if(isEpicSpell        (spells2da, i)) spelltype = SpellType.EPIC;
+			else if(isPsionicPower     (spells2da, i)) spelltype = SpellType.PSIONIC;
+			else if(isTruenameUtterance(spells2da, i)) spelltype = SpellType.UTTERANCE;
+			else if(isInvocation       (spells2da, i)) spelltype = SpellType.INVOCATION;
+			else if(isManeuver         (spells2da, i)) spelltype = SpellType.MANEUVER;
 
-			if(spelltype != NONE) {
+			if(spelltype != SpellType.NONE) {
 				name = tlk.get(spells2da.getEntry("Name", i))
 				          .replaceAll("/", " / "); // Let the UA insert line breaks if necessary
-				if(verbose) System.out.println("Generating entry data for " + name);
+				LOGGER.info("Generating entry data for " + name);
 				// Check the name for validity
 				if(name.equals(badStrRef)) {
-					err_pr.println("Invalid name for spell " + i);
+					LOGGER.error("Invalid name for spell " + i);
 					errored = true;
 				}
 
@@ -271,14 +271,14 @@ public class EntryGeneration {
 				text = htmlizeTLK(tlk.get(spells2da.getEntry("SpellDesc", i)));
 				// Check the description validity
 				if(tlk.get(spells2da.getEntry("SpellDesc", i)).equals(badStrRef)) {
-					err_pr.println("Invalid description for spell " + i + ": " + name);
+					LOGGER.error("Invalid description for spell " + i + ": " + name);
 					errored = true;
 				}
 
 				// Do the icon
 				icon = spells2da.getEntry("IconResRef", i);
 				if(icon.equals("****")) {
-					err_pr.println("Icon not defined for spell " + i + ": " + name);
+					LOGGER.error("Icon not defined for spell " + i + ": " + name);
 					errored = true;
 				}
 				icon = Icons.buildIcon(icon);
@@ -301,21 +301,21 @@ public class EntryGeneration {
 							                .replaceAll("/", " / ");
 							// Check the name for validity
 							if(subradName.equals(badStrRef)) {
-								err_pr.println("Invalid Name entry for spell " + subRadial);
+								LOGGER.error("Invalid Name entry for spell " + subRadial);
 								errored = true;
 							}
 
 							// Try icon
 							subradIcon = spells2da.getEntry("IconResRef", subRadial);
 							if(subradIcon.equals("****")) {
-								err_pr.println("Icon not defined for spell " + subRadial + ": " + subradName);
+								LOGGER.error("Icon not defined for spell " + subRadial + ": " + subradName);
 								errored = true;
 							}
 
 							// Build list
 							subradials.add(new Tuple<String, String>(subradName, Icons.buildIcon(subradIcon)));
 						} catch(NumberFormatException e) {
-							err_pr.println("Spell " + i + ": " + name + " contains an invalid SubRadSpell" + j + " entry");
+							LOGGER.error("Spell " + i + ": " + name + " contains an invalid SubRadSpell" + j + " entry");
 							errored = true;
 						}
 					}
@@ -351,7 +351,7 @@ public class EntryGeneration {
 					// Store a data structure represeting the entry into a hashmap
 					spells.put(i, new SpellEntry(name, text, icon, path, i, spelltype, subradials));
 				} else
-					err_pr.println("Failed to generate entry for spell " + i + ": " + name);
+					LOGGER.error("Failed to generate entry for spell " + i + ": " + name);
 			}
 		}
 		System.gc();
@@ -460,7 +460,7 @@ public class EntryGeneration {
 							storeMap.put(tlk.get(list2da.getEntry("Name", i)), Integer.parseInt(list2da.getEntry("SpellID", i)));
 						}
 					} catch(NumberFormatException e) {
-						err_pr.println("Invalid SpellID entry in " + list2da.getName() + ", line " + i);
+						LOGGER.error("Invalid SpellID entry in " + list2da.getName() + ", line " + i);
 					}
 				}
 			}
@@ -588,9 +588,9 @@ public class EntryGeneration {
 
 			// Get the name and validate it
 			name = tlk.get(masterFeats2da.getEntry("STRREF", i));
-			if(verbose) System.out.println("Generating preliminary data for " + name);
+			LOGGER.info("Generating preliminary data for " + name);
 			if(name.equals(badStrRef)) {
-				err_pr.println("Invalid name for masterfeat " + i);
+				LOGGER.error("Invalid name for masterfeat " + i);
 				errored = true;
 			}
 
@@ -598,14 +598,14 @@ public class EntryGeneration {
 			text = htmlizeTLK(tlk.get(masterFeats2da.getEntry("DESCRIPTION", i)));
 			// Check the description validity
 			if(tlk.get(masterFeats2da.getEntry("DESCRIPTION", i)).equals(badStrRef)) {
-				err_pr.println("Invalid description for masterfeat " + i + ": " + name);
+				LOGGER.error("Invalid description for masterfeat " + i + ": " + name);
 				errored = true;
 			}
 
 			// Add in the icon
 			String icon = masterFeats2da.getEntry("ICON", i);
 			if(icon.equals("****")) {
-				err_pr.println("Icon not defined for masterfeat " + i + ": " + name);
+				LOGGER.error("Icon not defined for masterfeat " + i + ": " + name);
 				errored = true;
 			}
 			icon = Icons.buildIcon(icon);
@@ -620,7 +620,7 @@ public class EntryGeneration {
 				entry = new FeatEntry(name, text, icon, path, i, false, true, null);
 				masterFeats.put(i, entry);
 			} else
-				err_pr.println("Failed to generate entry data for masterfeat " + i + ": " + name);
+				LOGGER.error("Failed to generate entry data for masterfeat " + i + ": " + name);
 		}
 		System.gc();
 	}
@@ -664,9 +664,9 @@ public class EntryGeneration {
 
 			// Get the name and validate it
 			name = tlk.get(feats2da.getEntry("FEAT", i));
-			if(verbose) System.out.println("Generating preliminary data for " + name);
+			LOGGER.info("Generating preliminary data for " + name);
 			if(name.equals(badStrRef)){
-				err_pr.println("Invalid name for feat " + i);
+				LOGGER.error("Invalid name for feat " + i);
 				errored = true;
 			}
 
@@ -674,13 +674,13 @@ public class EntryGeneration {
 			text = htmlizeTLK(tlk.get(feats2da.getEntry("DESCRIPTION", i)));
 			// Check the description validity
 			if(tlk.get(feats2da.getEntry("DESCRIPTION", i)).equals(badStrRef)) {
-				err_pr.println("Invalid description for feat " + i + ": " + name);
+				LOGGER.error("Invalid description for feat " + i + ": " + name);
 				errored = true;
 			}
 			// Add in the icon
 			icon = feats2da.getEntry("ICON", i);
 			if(icon.equals("****")) {
-				err_pr.println("Icon not defined for feat " + i + ": " + name);
+				LOGGER.error("Icon not defined for feat " + i + ": " + name);
 				errored = true;
 			}
 			icon = Icons.buildIcon(icon);
@@ -706,27 +706,27 @@ public class EntryGeneration {
 								                .replaceAll("/", " / ");
 								// Check the name for validity
 								if(subradName.equals(badStrRef)) {
-									err_pr.println("Invalid Name entry for spell " + subRadial);
+									LOGGER.error("Invalid Name entry for spell " + subRadial);
 									errored = true;
 								}
 
 								// Try icon
 								subradIcon = spells2da.getEntry("IconResRef", subRadial);
 								if(subradIcon.equals("****")) {
-									err_pr.println("Icon not defined for spell " + subRadial + ": " + subradName);
+									LOGGER.error("Icon not defined for spell " + subRadial + ": " + subradName);
 									errored = true;
 								}
 
 								// Build list
 								subradials.add(new Tuple<String, String>(subradName, Icons.buildIcon(subradIcon)));
 							} catch(NumberFormatException e) {
-								err_pr.println("Spell " + featSpell + ": " + name + " contains an invalid SubRadSpell" + j + " entry");
+								LOGGER.error("Spell " + featSpell + ": " + name + " contains an invalid SubRadSpell" + j + " entry");
 								errored = true;
 							}
 						}
 					}
 				} catch(NumberFormatException e) {
-					err_pr.println("Invalid SPELLID for feat " + i + ": " + name);
+					LOGGER.error("Invalid SPELLID for feat " + i + ": " + name);
 					errored = true;
 				}
 			}
@@ -750,7 +750,7 @@ public class EntryGeneration {
 				// Store the entry to wait for further processing
 				feats.put(i, entry);
 			}else
-				err_pr.println("Failed to generate entry data for feat " + i + ": " + name);
+				LOGGER.error("Failed to generate entry data for feat " + i + ": " + name);
 		}
 		System.gc();
 	}
@@ -767,7 +767,7 @@ public class EntryGeneration {
 
 		// Link normal feats to each other and to masterfeats
 		for(FeatEntry check : feats.values()) {
-			if(verbose) System.out.println("Linking feat " + check.name);
+			LOGGER.info("Linking feat " + check.name);
 			// Link to master
 			if(!feats2da.getEntry("MASTERFEAT", check.entryNum).equals("****")){
 				try {
@@ -777,9 +777,9 @@ public class EntryGeneration {
 					if(check.isEpic) other.isEpic = true;
 					if(!check.isClassFeat) other.isClassFeat = false;
 				} catch(NumberFormatException e) {
-					err_pr.println("Feat " + check.entryNum + ": " + check.name + " contains an invalid MASTERFEAT entry");
+					LOGGER.error("Feat " + check.entryNum + ": " + check.name + " contains an invalid MASTERFEAT entry");
 				} catch(NullPointerException e) {
-					err_pr.println("Feat " + check.entryNum + ": " + check.name + " MASTERFEAT points to a nonexistent masterfeat entry");
+					LOGGER.error("Feat " + check.entryNum + ": " + check.name + " MASTERFEAT points to a nonexistent masterfeat entry");
 			}}
 
 			// Handle prerequisites
@@ -791,19 +791,19 @@ public class EntryGeneration {
 					other = feats.get(Integer.parseInt(feats2da.getEntry("SUCCESSOR", check.entryNum)));
 					// Check for feats that have themselves as successor
 					if(other == check)
-						err_pr.println("Feat " + check.entryNum + ": " + check.name + " has itself as successor");
+						LOGGER.error("Feat " + check.entryNum + ": " + check.name + " has itself as successor");
 					other.isSuccessor = true;
 					check.successor = other;
 				} catch(NumberFormatException e) {
-					err_pr.println("Feat " + check.entryNum + ": " + check.name + " contains an invalid SUCCESSOR entry");
+					LOGGER.error("Feat " + check.entryNum + ": " + check.name + " contains an invalid SUCCESSOR entry");
 				} catch(NullPointerException e) {
-					err_pr.println("Feat " + check.entryNum + ": " + check.name + " SUCCESSOR points to a nonexistent feat entry");
+					LOGGER.error("Feat " + check.entryNum + ": " + check.name + " SUCCESSOR points to a nonexistent feat entry");
 			}}
 		}
 
 		// Masterfeat categorisation
 		for(FeatEntry check : masterFeats.values()) {
-			if(verbose) System.out.println("Linking masterfeat " + check.name);
+			LOGGER.info("Linking masterfeat " + check.name);
 			allChildrenEpic = allChildrenClassFeat = true;
 			for(FeatEntry child : check.childFeats.values()) {
 				if(!child.isEpic)      allChildrenEpic      = false;
@@ -838,19 +838,19 @@ public class EntryGeneration {
 		if(!andReq1Num.equals("****")){
 			try{
 				andReq1 = feats.get(Integer.parseInt(andReq1Num));
-				if     (andReq1 == null)  err_pr.println("Feat " + check.entryNum + ": " + check.name + " PREREQFEAT1 points to a nonexistent feat entry");
-				else if(andReq1 == check) err_pr.println("Feat " + check.entryNum + ": " + check.name + " has itself as PREREQFEAT1");
+				if     (andReq1 == null)  LOGGER.error("Feat " + check.entryNum + ": " + check.name + " PREREQFEAT1 points to a nonexistent feat entry");
+				else if(andReq1 == check) LOGGER.error("Feat " + check.entryNum + ": " + check.name + " has itself as PREREQFEAT1");
 			}catch(NumberFormatException e){
-				err_pr.println("Feat " + check.entryNum + ": " + check.name + " contains an invalid PREREQFEAT1 entry");
+				LOGGER.error("Feat " + check.entryNum + ": " + check.name + " contains an invalid PREREQFEAT1 entry");
 		}}
 		if(!andReq2Num.equals("****")){
 			try{
 				andReq2 = feats.get(Integer.parseInt(andReq2Num));
-				if     (andReq2 == null)  err_pr.println("Feat " + check.entryNum + ": " + check.name + " PREREQFEAT2 points to a nonexistent feat entry");
-				else if(andReq2 == check) err_pr.println("Feat " + check.entryNum + ": " + check.name + " has itself as PREREQFEAT2");
+				if     (andReq2 == null)  LOGGER.error("Feat " + check.entryNum + ": " + check.name + " PREREQFEAT2 points to a nonexistent feat entry");
+				else if(andReq2 == check) LOGGER.error("Feat " + check.entryNum + ": " + check.name + " has itself as PREREQFEAT2");
 			}
 			catch(NumberFormatException e){
-				err_pr.println("Feat " + check.entryNum + ": " + check.name + " contains an invalid PREREQFEAT2 entry");
+				LOGGER.error("Feat " + check.entryNum + ": " + check.name + " contains an invalid PREREQFEAT2 entry");
 		}}
 
 		// Check if we had at least one valid entry. If so, link
@@ -878,15 +878,15 @@ public class EntryGeneration {
 				if(!orReqs[i].equals("****")){
 					try{ orReq = feats.get(Integer.parseInt(orReqs[i])); }
 					catch(NumberFormatException e){
-						err_pr.println("Feat " + check.entryNum + ": " + check.name + " contains an invalid OrReqFeat" + i + " entry");
+						LOGGER.error("Feat " + check.entryNum + ": " + check.name + " contains an invalid OrReqFeat" + i + " entry");
 					}
 					if(orReq != null){
-						if(orReq == check) err_pr.println("Feat " + check.entryNum + ": " + check.name + " has itself as OrReqFeat" + i);
+						if(orReq == check) LOGGER.error("Feat " + check.entryNum + ": " + check.name + " has itself as OrReqFeat" + i);
 						check.orRequirements.put(orReq.name, orReq);
 						orReq.requiredForFeats.put(check.name, check);
 					}
 					else
-						err_pr.println("Feat " + check.entryNum + ": " + check.name + " OrReqFeat" + i + " points to a nonexistent feat entry");
+						LOGGER.error("Feat " + check.entryNum + ": " + check.name + " OrReqFeat" + i + " points to a nonexistent feat entry");
 				}
 			}
 		}
@@ -919,9 +919,9 @@ public class EntryGeneration {
 
 			// Get the name and validate it
 			name = tlk.get(domains2da.getEntry("Name", i));
-			if(verbose) System.out.println("Printing page for " + name);
+			LOGGER.info("Printing page for " + name);
 			if(name.equals(badStrRef)) {
-				err_pr.println("Invalid name for domain " + i);
+				LOGGER.error("Invalid name for domain " + i);
 				errored = true;
 			}
 
@@ -929,14 +929,14 @@ public class EntryGeneration {
 			text = htmlizeTLK(tlk.get(domains2da.getEntry("Description", i)));
 			// Check the description validity
 			if(tlk.get(domains2da.getEntry("Description", i)).equals(badStrRef)) {
-				err_pr.println("Invalid description for domain " + i + ": " + name);
+				LOGGER.error("Invalid description for domain " + i + ": " + name);
 				errored = true;
 			}
 
 			// Add in the icon
 			icon = domains2da.getEntry("Icon", i);
 			if(icon.equals("****")) {
-				err_pr.println("Icon not defined for domain " + i + ": " + name);
+				LOGGER.error("Icon not defined for domain " + i + ": " + name);
 				errored = true;
 			}
 			icon = Icons.buildIcon(icon);
@@ -945,10 +945,10 @@ public class EntryGeneration {
 			try {
 				grantedFeat = feats.get(Integer.parseInt(domains2da.getEntry("GrantedFeat", i)));
 			} catch(NumberFormatException e) {
-				err_pr.println("Invalid entry in GrantedFeat of domain " + i + ": " + name);
+				LOGGER.error("Invalid entry in GrantedFeat of domain " + i + ": " + name);
 				errored = true;
 			} catch(NullPointerException e) {
-				err_pr.println("GrantedFeat entry for domain " + i + ": " + name + " points to non-existent feat: " + domains2da.getEntry("GrantedFeat", i));
+				LOGGER.error("GrantedFeat entry for domain " + i + ": " + name + " points to non-existent feat: " + domains2da.getEntry("GrantedFeat", i));
 				errored = true;
 			}
 
@@ -962,11 +962,11 @@ public class EntryGeneration {
 					if(grantedSpell != null)
 						spellList.add(grantedSpell);
 					else {
-						err_pr.println("Level_" + j + " entry for domain " + i + ": " + name + " points to non-existent spell: " + domains2da.getEntry("Level_" + j, i));
+						LOGGER.error("Level_" + j + " entry for domain " + i + ": " + name + " points to non-existent spell: " + domains2da.getEntry("Level_" + j, i));
 						errored = true;
 					}
 				} catch(NumberFormatException e) {
-					err_pr.println("Invalid entry in Level_" + j + " of domain " + i + ": " + name);
+					LOGGER.error("Invalid entry in Level_" + j + " of domain " + i + ": " + name);
 					errored = true;
 				}
 			}
@@ -976,7 +976,7 @@ public class EntryGeneration {
 			if(!errored || tolErr) {
 				domains.put(i, new DomainEntry(name, text, icon, path, i, grantedFeat, spellList));
 			} else
-				err_pr.println("Failed to generate entry for domain " + i + ": " + name);
+				LOGGER.error("Failed to generate entry for domain " + i + ": " + name);
 		}
 		System.gc();
 	}
@@ -1005,9 +1005,9 @@ public class EntryGeneration {
 			try {
 				// Get the name and validate it
 				name = tlk.get(racialtypes2da.getEntry("Name", i));
-				if(verbose) System.out.println("Printing page for " + name);
+				LOGGER.info("Printing page for " + name);
 				if(name.equals(badStrRef)) {
-					err_pr.println("Invalid name for race " + i);
+					LOGGER.error("Invalid name for race " + i);
 					errored = true;
 				}
 
@@ -1015,7 +1015,7 @@ public class EntryGeneration {
 				text = htmlizeTLK(tlk.get(racialtypes2da.getEntry("Description", i)));
 				// Check the description validity
 				if(tlk.get(racialtypes2da.getEntry("Description", i)).equals(badStrRef)) {
-					err_pr.println("Invalid description for race " + i + ": " + name);
+					LOGGER.error("Invalid description for race " + i + ": " + name);
 					errored = true;
 				}
 
@@ -1033,10 +1033,10 @@ public class EntryGeneration {
 						grantedFeat = feats.get(Integer.parseInt(featTable.getEntry("FeatIndex", j)));
 						featList.put(grantedFeat.name, grantedFeat);
 					} catch(NumberFormatException e) {
-						err_pr.println("Invalid entry in FeatIndex line " + j + " of " + featTable.getName());
+						LOGGER.error("Invalid entry in FeatIndex line " + j + " of " + featTable.getName());
 						errored = true;
 					} catch(NullPointerException e) {
-						err_pr.println("FeatIndex line " + j + " of " + featTable.getName() + " points to non-existent feat: " + featTable.getEntry("FeatIndex", j));
+						LOGGER.error("FeatIndex line " + j + " of " + featTable.getName() + " points to non-existent feat: " + featTable.getEntry("FeatIndex", j));
 						errored = true;
 					}
 				}
@@ -1048,7 +1048,7 @@ public class EntryGeneration {
 				} else
 					throw new PageGenerationException("Error(s) encountered while creating page");
 			} catch(PageGenerationException e) {
-				err_pr.println("Failed to print page for race " + i + ": " + name + ":\n" + e);
+				LOGGER.error("Failed to print page for race " + i + ": " + name + ":\n" + e);
 			}
 		}
 		System.gc();
@@ -1083,9 +1083,9 @@ public class EntryGeneration {
 			errored = false;
 			try {
 				name = tlk.get(classes2da.getEntry("Name", i));
-				if(verbose) System.out.println("Printing page for " + name);
+				LOGGER.info("Printing page for " + name);
 				if(name.equals(badStrRef)){
-					err_pr.println("Invalid name for class " + i);
+					LOGGER.error("Invalid name for class " + i);
 					errored = true;
 				}
 
@@ -1093,14 +1093,14 @@ public class EntryGeneration {
 				text = htmlizeTLK(tlk.get(classes2da.getEntry("Description", i)));
 				// Check the description validity
 				if(tlk.get(classes2da.getEntry("Description", i)).equals(badStrRef)) {
-					err_pr.println("Invalid description for class " + i + ": " + name);
+					LOGGER.error("Invalid description for class " + i + ": " + name);
 					errored = true;
 				}
 
 				// Add in the icon
 				icon = classes2da.getEntry("Icon", i);
 				if(icon.equals("****")) {
-					err_pr.println("Icon not defined for class " + i + ": " + name);
+					LOGGER.error("Icon not defined for class " + i + ": " + name);
 					errored = true;
 				}
 				icon = Icons.buildIcon(icon);
@@ -1124,7 +1124,7 @@ public class EntryGeneration {
 				temp = classes2da.getEntry("XPPenalty", i);
 				if(!(temp.equals("0") || temp.equals("1"))) {
 					if(tolErr) {
-						err_pr.println("Invalid List XPPenalty in classes.2da on row " + i + ": " + temp);
+						LOGGER.error("Invalid List XPPenalty in classes.2da on row " + i + ": " + temp);
 						continue;
 					} else throw new PageGenerationException("Invalid XPPenalty entry in classes.2da on row " + i + ": " + temp);
 				}
@@ -1139,7 +1139,7 @@ public class EntryGeneration {
 				} else
 					throw new PageGenerationException("Error(s) encountered while creating page");
 			} catch(PageGenerationException e) {
-				err_pr.println("Failed to print page for class " + i + ": " + name + ":\n" + e);
+				LOGGER.error("Failed to print page for class " + i + ": " + name + ":\n" + e);
 			}
 		}
 		System.gc();
@@ -1177,12 +1177,12 @@ public class EntryGeneration {
 		int maxToPrint = 0, maxLevel = 0, epicLevel = 0;
 		try { maxLevel = Integer.parseInt(classes2da.getEntry("MaxLevel", entryNum)); }
 		catch(NumberFormatException e) {
-			if(tolErr) err_pr.println("Invalid MaxLevel entry for class " + entryNum + ": " + tlk.get(classes2da.getEntry("Name", entryNum)));
+			if(tolErr) LOGGER.error("Invalid MaxLevel entry for class " + entryNum + ": " + tlk.get(classes2da.getEntry("Name", entryNum)));
 			else throw new PageGenerationException("Invalid MaxLevel entry for class " + entryNum + ": " + tlk.get(classes2da.getEntry("Name", entryNum)));
 		}
 		try { epicLevel = Integer.parseInt(classes2da.getEntry("EpicLevel", entryNum)); }
 		catch(NumberFormatException e) {
-			if(tolErr) err_pr.println("Invalid EpicLevel entry for class " + entryNum + ": " + tlk.get(classes2da.getEntry("Name", entryNum)));
+			if(tolErr) LOGGER.error("Invalid EpicLevel entry for class " + entryNum + ": " + tlk.get(classes2da.getEntry("Name", entryNum)));
 			else throw new PageGenerationException("Invalid EpicLevel entry for class " + entryNum + ": " + tlk.get(classes2da.getEntry("Name", entryNum)));
 		}
 
@@ -1242,7 +1242,7 @@ public class EntryGeneration {
 			// Yet more validity checking :P
 			if(!(skillNum.equals("0") || skillNum.equals("1"))) {
 				if(tolErr) {
-					err_pr.println("Invalid ClassSkill entry in " + skillTable.getName() + " on row " + i);
+					LOGGER.error("Invalid ClassSkill entry in " + skillTable.getName() + " on row " + i);
 					continue;
 				} else throw new PageGenerationException("Invalid ClassSkill entry in " + skillTable.getName() + " on row " + i);
 			}
@@ -1251,13 +1251,13 @@ public class EntryGeneration {
 				skillEntry = skills.get(Integer.parseInt(skillTable.getEntry("SkillIndex", i)));
 			} catch(NumberFormatException e) {
 				if(tolErr) {
-					err_pr.println("Invalid SkillIndex entry in " + skillTable.getName() + " on row " + i);
+					LOGGER.error("Invalid SkillIndex entry in " + skillTable.getName() + " on row " + i);
 					continue;
 				} else throw new PageGenerationException("Invalid SkillIndex entry in " + skillTable.getName() + " on row " + i);
 			}
 			if(skillEntry == null) {
 				if(tolErr) {
-					err_pr.println("SkillIndex entry in " + skillTable.getName() + " on row " + i + " points to non-existent skill");
+					LOGGER.error("SkillIndex entry in " + skillTable.getName() + " on row " + i + " points to non-existent skill");
 					continue;
 				} else throw new PageGenerationException("SkillIndex entry in " + skillTable.getName() + " on row " + i + " points to non-existent skill");
 			}
@@ -1330,7 +1330,7 @@ public class EntryGeneration {
 		// Sanity check
 		else if(epicLevel > maxLevel) {
 			if(tolErr) {
-				err_pr.println("EpicLevel value(" + epicLevel + ") greater than MaxLevel value(" + maxLevel + ") for class " + entryNum + ": " + tlk.get(classes2da.getEntry("Name", entryNum)));
+				LOGGER.error("EpicLevel value(" + epicLevel + ") greater than MaxLevel value(" + maxLevel + ") for class " + entryNum + ": " + tlk.get(classes2da.getEntry("Name", entryNum)));
 				epicLevel = maxLevel;
 			} else throw new PageGenerationException("EpicLevel value(" + epicLevel + ") greater than MaxLevel value(" + maxLevel + ") for class " + entryNum + ": " + tlk.get(classes2da.getEntry("Name", entryNum)));
 		}
@@ -1352,7 +1352,7 @@ public class EntryGeneration {
 			listNum = featTable.getEntry("List", i);
 			if(!(listNum.equals("0") || listNum.equals("1") || listNum.equals("2") || listNum.equals("3"))) {
 				if(tolErr) {
-					err_pr.println("Invalid List entry in " + featTable.getName() + " on row " + i + ": " + listNum);
+					LOGGER.error("Invalid List entry in " + featTable.getName() + " on row " + i + ": " + listNum);
 					continue;
 				} else throw new PageGenerationException("Invalid List entry in " + featTable.getName() + " on row " + i + ": " + listNum);
 			}
@@ -1362,7 +1362,7 @@ public class EntryGeneration {
 				grantedLevel = Integer.parseInt(featTable.getEntry("GrantedOnLevel", i));
 			} catch(NumberFormatException e) {
 				if(tolErr) {
-					err_pr.println("Invalid GrantedOnLevel entry in " + featTable.getName() + " on row " + i + ": " + featTable.getEntry("GrantedOnLevel", i));
+					LOGGER.error("Invalid GrantedOnLevel entry in " + featTable.getName() + " on row " + i + ": " + featTable.getEntry("GrantedOnLevel", i));
 					continue;
 				} else throw new PageGenerationException("Invalid GrantedOnLevel entry in " + featTable.getName() + " on row " + i + ": " + featTable.getEntry("GrantedOnLevel", i));
 			}
@@ -1370,7 +1370,7 @@ public class EntryGeneration {
 			// Complain about a semantic error
 			if(listNum.equals("3") && grantedLevel == -1) {
 				if(tolErr) {
-					err_pr.println("List value '3' combined with GrantedOnLevel value '-1' in " + featTable.getName() + " on row " + i);
+					LOGGER.error("List value '3' combined with GrantedOnLevel value '-1' in " + featTable.getName() + " on row " + i);
 					continue;
 				} else throw new PageGenerationException("List value '3' combined with GrantedOnLevel value '-1' in " + featTable.getName() + " on row " + i);
 			}
@@ -1380,13 +1380,13 @@ public class EntryGeneration {
 				classFeat = feats.get(Integer.parseInt(featTable.getEntry("FeatIndex", i)));
 			} catch(NumberFormatException e) {
 				if(tolErr) {
-					err_pr.println("Invalid FeatIndex entry in " + featTable.getName() + " on row " + i + ": " + featTable.getEntry("FeatIndex", i));
+					LOGGER.error("Invalid FeatIndex entry in " + featTable.getName() + " on row " + i + ": " + featTable.getEntry("FeatIndex", i));
 					continue;
 				} else throw new PageGenerationException("Invalid FeatIndex entry in " + featTable.getName() + " on row " + i + ": " + featTable.getEntry("FeatIndex", i));
 			}
 			if(classFeat == null) {
 				if(tolErr) {
-					err_pr.println("FeatIndex entry in " + featTable.getName() + " on row " + i + " points to non-existent feat: " + featTable.getEntry("FeatIndex", i));
+					LOGGER.error("FeatIndex entry in " + featTable.getName() + " on row " + i + " points to non-existent feat: " + featTable.getEntry("FeatIndex", i));
 					continue;
 				} else throw new PageGenerationException("FeatIndex entry in " + featTable.getName() + " on row " + i + " points to non-existent feat: " + featTable.getEntry("FeatIndex", i));
 			}
@@ -1396,7 +1396,7 @@ public class EntryGeneration {
 			if(grantedLevel > 40) continue;
 			if(grantedLevel > maxLevel) {
 				// This is never a fatal error. It's merely bad practice to place the feat outside reachable bounds, but not obviously so (ex, value of 99)
-				err_pr.println("GrantedOnLevel entry in " + featTable.getName() + " on row " + i + " is greater than the class's maximum level, but not obviously unreachable: " + grantedLevel + " vs. " + maxLevel);
+				LOGGER.error("GrantedOnLevel entry in " + featTable.getName() + " on row " + i + " is greater than the class's maximum level, but not obviously unreachable: " + grantedLevel + " vs. " + maxLevel);
 				continue;
 			}
 
@@ -1448,7 +1448,7 @@ public class EntryGeneration {
 				bonusFeatCounts.add(Integer.parseInt(bonusFeatTable.getEntry("Bonus", i)));
 			} catch(NumberFormatException e) {
 				if(tolErr) {
-					err_pr.println("Invalid Bonus entry in " + bonusFeatTable.getName() + " on row " + i + ": " + bonusFeatTable.getEntry("Bonus", i));
+					LOGGER.error("Invalid Bonus entry in " + bonusFeatTable.getName() + " on row " + i + ": " + bonusFeatTable.getEntry("Bonus", i));
 					continue;
 				} else throw new PageGenerationException("Invalid Bonus entry in " + bonusFeatTable.getName() + " on row " + i + ": " + bonusFeatTable.getEntry("Bonus", i));
 			}
@@ -1527,7 +1527,7 @@ public class EntryGeneration {
 					level = Integer.parseInt(spellList.getEntry("Level", i));
 				} catch (NumberFormatException e) {
 					if(tolErr) {
-						err_pr.println("Invalid Level entry in " + spellList.getName() + " on row " + i + ": " + spellList.getEntry("Level", i));
+						LOGGER.error("Invalid Level entry in " + spellList.getName() + " on row " + i + ": " + spellList.getEntry("Level", i));
 						continue;
 					} else throw new PageGenerationException("Invalid Level entry in " + spellList.getName() + " on row " + i + ": " + spellList.getEntry("Level", i));
 				}
@@ -1538,13 +1538,13 @@ public class EntryGeneration {
 					spell = spells.get(Integer.parseInt(spellList.getEntry("SpellID", i)));
 				} catch (NumberFormatException e) {
 					if(tolErr) {
-						err_pr.println("Invalid SpellID entry in " + spellList.getName() + " on row " + i + ": " + spellList.getEntry("SpellID", i));
+						LOGGER.error("Invalid SpellID entry in " + spellList.getName() + " on row " + i + ": " + spellList.getEntry("SpellID", i));
 						continue;
 					} else throw new PageGenerationException("Invalid SpellID entry in " + spellList.getName() + " on row " + i + ": " + spellList.getEntry("SpellID", i));
 				}
 				if(spell == null){
 					if(tolErr) {
-						err_pr.println("SpellID entry in " + spellList.getName() + " on row " + i + " points at nonexistent spell: " + spellList.getEntry("SpellID", i));
+						LOGGER.error("SpellID entry in " + spellList.getName() + " on row " + i + " points at nonexistent spell: " + spellList.getEntry("SpellID", i));
 						continue;
 					} else throw new PageGenerationException("SpellID entry in " + spellList.getName() + " on row " + i + " points at nonexistent spell: " + spellList.getEntry("SpellID", i));
 				}
@@ -1580,7 +1580,7 @@ public class EntryGeneration {
 					level = Integer.parseInt(powerList.getEntry("Level", i));
 				} catch (NumberFormatException e) {
 					if(tolErr){
-						err_pr.println("Invalid Level entry in " + powerList.getName() + " on row " + i + ": " + powerList.getEntry("Level", i));
+						LOGGER.error("Invalid Level entry in " + powerList.getName() + " on row " + i + ": " + powerList.getEntry("Level", i));
 						continue;
 					}else throw new PageGenerationException("Invalid Level entry in " + powerList.getName() + " on row " + i + ": " + powerList.getEntry("Level", i));
 				}
@@ -1592,13 +1592,13 @@ public class EntryGeneration {
 					power = spells.get(psiPowMap.get(tlk.get(Integer.parseInt(powerList.getEntry("Name", i)))));
 				} catch (NumberFormatException e) {
 					if(tolErr){
-						err_pr.println("Invalid Name entry in " + powerList.getName() + " on row " + i + ": " + powerList.getEntry("Name", i));
+						LOGGER.error("Invalid Name entry in " + powerList.getName() + " on row " + i + ": " + powerList.getEntry("Name", i));
 						continue;
 					}else throw new PageGenerationException("Invalid Name entry in " + powerList.getName() + " on row " + i + ": " + powerList.getEntry("Name", i));
 				}
 				if(power == null){
 					if(tolErr){
-						err_pr.println("Unable to map Name entry in " + powerList.getName() + " on row " + i + " to a spellEntry: " + tlk.get(powerList.getEntry("Name", i)));
+						LOGGER.error("Unable to map Name entry in " + powerList.getName() + " on row " + i + " to a spellEntry: " + tlk.get(powerList.getEntry("Name", i)));
 						continue;
 					}else throw new PageGenerationException("Unable to map Name entry in " + powerList.getName() + " on row " + i + " to a spellEntry: " + tlk.get(powerList.getEntry("Name", i)));
 				}
@@ -1634,7 +1634,7 @@ public class EntryGeneration {
 					level = Integer.parseInt(utterList.getEntry("Level", i));
 				} catch (NumberFormatException e) {
 					if(tolErr){
-						err_pr.println("Invalid Level entry in " + utterList.getName() + " on row " + i + ": " + utterList.getEntry("Level", i));
+						LOGGER.error("Invalid Level entry in " + utterList.getName() + " on row " + i + ": " + utterList.getEntry("Level", i));
 						continue;
 					}else throw new PageGenerationException("Invalid Level entry in " + utterList.getName() + " on row " + i + ": " + utterList.getEntry("Level", i));
 				}
@@ -1646,13 +1646,13 @@ public class EntryGeneration {
 					utterance = spells.get(utterMap.get(tlk.get(Integer.parseInt(utterList.getEntry("Name", i)))));
 				} catch (NumberFormatException e) {
 					if(tolErr){
-						err_pr.println("Invalid Name entry in " + utterList.getName() + " on row " + i + ": " + utterList.getEntry("Name", i));
+						LOGGER.error("Invalid Name entry in " + utterList.getName() + " on row " + i + ": " + utterList.getEntry("Name", i));
 						continue;
 					}else throw new PageGenerationException("Invalid Name entry in " + utterList.getName() + " on row " + i + ": " + utterList.getEntry("Name", i));
 				}
 				if(utterance == null){
 					if(tolErr){
-						err_pr.println("Unable to map Name entry in " + utterList.getName() + " on row " + i + " to a spellEntry: " + tlk.get(utterList.getEntry("Name", i)));
+						LOGGER.error("Unable to map Name entry in " + utterList.getName() + " on row " + i + " to a spellEntry: " + tlk.get(utterList.getEntry("Name", i)));
 						continue;
 					}else throw new PageGenerationException("Unable to map Name entry in " + utterList.getName() + " on row " + i + " to a spellEntry: " + tlk.get(utterList.getEntry("Name", i)));
 				}
@@ -1688,7 +1688,7 @@ public class EntryGeneration {
 					level = Integer.parseInt(invocList.getEntry("Level", i));
 				} catch (NumberFormatException e) {
 					if(tolErr){
-						err_pr.println("Invalid Level entry in " + invocList.getName() + " on row " + i + ": " + invocList.getEntry("Level", i));
+						LOGGER.error("Invalid Level entry in " + invocList.getName() + " on row " + i + ": " + invocList.getEntry("Level", i));
 						continue;
 					}else throw new PageGenerationException("Invalid Level entry in " + invocList.getName() + " on row " + i + ": " + invocList.getEntry("Level", i));
 				}
@@ -1700,13 +1700,13 @@ public class EntryGeneration {
 					invocation = spells.get(invMap.get(tlk.get(spells2da.getEntry("Name", invocList.getEntry("RealSpellID", i)))));
 				} catch (NumberFormatException e) {
 					if(tolErr){
-						err_pr.println("Invalid Name entry in " + invocList.getName() + " on row " + i + ": " + invocList.getEntry("Name", i));
+						LOGGER.error("Invalid Name entry in " + invocList.getName() + " on row " + i + ": " + invocList.getEntry("Name", i));
 						continue;
 					}else throw new PageGenerationException("Invalid Name entry in " + invocList.getName() + " on row " + i + ": " + invocList.getEntry("Name", i));
 				}
 				if(invocation == null){
 					if(tolErr){
-						err_pr.println("Unable to map Name entry in " + invocList.getName() + " on row " + i + " to a spellEntry: " + tlk.get(invocList.getEntry("Name", i)));
+						LOGGER.error("Unable to map Name entry in " + invocList.getName() + " on row " + i + " to a spellEntry: " + tlk.get(invocList.getEntry("Name", i)));
 						continue;
 					}else throw new PageGenerationException("Unable to map Name entry in " + invocList.getName() + " on row " + i + " to a spellEntry: " + tlk.get(invocList.getEntry("Name", i)));
 				}
@@ -1742,7 +1742,7 @@ public class EntryGeneration {
 					level = Integer.parseInt(maneuList.getEntry("Level", i));
 				} catch (NumberFormatException e) {
 					if(tolErr){
-						err_pr.println("Invalid Level entry in " + maneuList.getName() + " on row " + i + ": " + maneuList.getEntry("Level", i));
+						LOGGER.error("Invalid Level entry in " + maneuList.getName() + " on row " + i + ": " + maneuList.getEntry("Level", i));
 						continue;
 					}else throw new PageGenerationException("Invalid Level entry in " + maneuList.getName() + " on row " + i + ": " + maneuList.getEntry("Level", i));
 				}
@@ -1754,13 +1754,13 @@ public class EntryGeneration {
 					maneuver = spells.get(maneuverMap.get(tlk.get(spells2da.getEntry("Name", maneuList.getEntry("RealSpellID", i)))));
 				} catch (NumberFormatException e) {
 					if(tolErr){
-						err_pr.println("Invalid Name entry in " + maneuList.getName() + " on row " + i + ": " + maneuList.getEntry("Name", i));
+						LOGGER.error("Invalid Name entry in " + maneuList.getName() + " on row " + i + ": " + maneuList.getEntry("Name", i));
 						continue;
 					}else throw new PageGenerationException("Invalid Name entry in " + maneuList.getName() + " on row " + i + ": " + maneuList.getEntry("Name", i));
 				}
 				if(maneuver == null){
 					if(tolErr){
-						err_pr.println("Unable to map Name entry in " + maneuList.getName() + " on row " + i + " to a spellEntry: " + tlk.get(maneuList.getEntry("Name", i)));
+						LOGGER.error("Unable to map Name entry in " + maneuList.getName() + " on row " + i + " to a spellEntry: " + tlk.get(maneuList.getEntry("Name", i)));
 						continue;
 					}else throw new PageGenerationException("Unable to map Name entry in " + maneuList.getName() + " on row " + i + " to a spellEntry: " + tlk.get(maneuList.getEntry("Name", i)));
 				}

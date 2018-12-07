@@ -1,16 +1,18 @@
 package prc.utils;
 
-import prc.autodoc.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.Random;
 
-import java.io.*;
-import java.math.*;
-import java.util.*;
-//import java.util.regex.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-//for the spinner
-import static prc.Main.*;
+import prc.autodoc.Data_2da;
 
-public final class NPCEvolve{
+
+public final class NPCEvolve {
+	private static Logger LOGGER = LoggerFactory.getLogger(NPCEvolve.class);
 	private NPCEvolve(){}
 
 	private static int countAreas    =  5;
@@ -86,7 +88,7 @@ public final class NPCEvolve{
 					score += dataset[areaID][classID][packageID];
 				}
 				data[classID][packageID] = score / countArea;
-				System.out.println("data["+classID+"]["+packageID+"] = "+data[classID][packageID]);
+				LOGGER.info("data["+classID+"]["+packageID+"] = "+data[classID][packageID]);
 			}
 		}
 

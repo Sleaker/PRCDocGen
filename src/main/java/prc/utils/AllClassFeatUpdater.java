@@ -1,11 +1,19 @@
 package prc.utils;
 
-import static prc.Main.err_pr;
-import static prc.Main.spinner;
-//import static prc.Main.verbose;
-import java.util.*;
-import java.io.*;
 
+import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import prc.AppMain;
 import prc.autodoc.Data_2da;
 
 
@@ -17,7 +25,7 @@ import prc.autodoc.Data_2da;
  * @author Ornedan
  */
 public class AllClassFeatUpdater {
-	
+	private static Logger LOGGER = LoggerFactory.getLogger(AllClassFeatUpdater.class);
 	private static boolean cropduplicates = false;
 
 	/**
@@ -44,7 +52,7 @@ public class AllClassFeatUpdater {
 							cropduplicates = true;
 							break;
 						default:
-							System.out.println("Unknown parameter: " + c);
+							LOGGER.error("Unknown parameter: " + c);
 							readMe();
 						}
 					}
@@ -60,14 +68,14 @@ public class AllClassFeatUpdater {
 		}
 		
 		if(cfabcPath == null){
-			err_pr.println("You did not specify the location of cls_feat_allBaseClasses.2da\n");
+			LOGGER.error("You did not specify the location of cls_feat_allBaseClasses.2da");
 			readMe();
 		}
 		if(paths.size() == 0){
-			err_pr.println("You did not specify targets!\n");
+			LOGGER.error("You did not specify targets!");
 			readMe();
 		}
-		spinner.disable();
+		AppMain.spinner.disable();
 		
 		// Load and crop the template 2da
 		Data_2da source = Data_2da.load2da(cfabcPath);
@@ -110,7 +118,7 @@ public class AllClassFeatUpdater {
 					target.getName().toLowerCase().endsWith(".2da"))
 				cls_feat2da = new File[]{target};
 			else{
-				err_pr.println("Parameter \"" + path + "\" is not a valid target!");
+				LOGGER.error("Parameter \"" + path + "\" is not a valid target!");
 				continue;
 			}
 			
@@ -120,13 +128,13 @@ public class AllClassFeatUpdater {
 				try{
 					update2da(source, Data_2da.load2da(file.getCanonicalPath()), file.getParentFile().getCanonicalPath());
 				}catch(Exception e){
-					err_pr.printException(e);
+					LOGGER.debug("Error updating 2da:", e);
 				}
 			}
 		}
 	}
 	
-	private static void update2da(Data_2da updateSource, Data_2da target, String path) throws IOException{
+	private static void update2da(Data_2da updateSource, Data_2da target, String path) throws IOException {
 		// Find the beginning of replaceable area
 		int beginRow = -1, i = 0;
 		while(beginRow == -1 && i < target.getEntryCount()){
@@ -163,7 +171,7 @@ public class AllClassFeatUpdater {
 	
 	private static void cropDuplicates(Data_2da toCrop, Data_2da source){
 		// Load the featIDs from source to a hashset
-		HashSet<Integer> featIDs = new HashSet<Integer>();
+		Set<Integer> featIDs = new HashSet<Integer>();
 		
 		for(int i = 0; i < source.getEntryCount(); i++){
 			try{

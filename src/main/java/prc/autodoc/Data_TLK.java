@@ -3,13 +3,19 @@ package prc.autodoc;
 import java.io.*;
 import java.util.*;
 
-import static prc.Main.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import prc.AppMain;
+
 
 /**
  * This class forms an interface for accessing TLK files in the
  * PRC automated manual generator.
  */
 public class Data_TLK{
+	private static Logger LOGGER = LoggerFactory.getLogger(Data_TLK.class);
+
 	private HashMap<Integer, String> mainData = new HashMap<Integer, String>();
 	private int highestEntry = 0;
 
@@ -48,7 +54,7 @@ public class Data_TLK{
 		String fileName = baseFile.getName();
 
 		// Tell the user what we are doing
-		if(verbose) System.out.print("Reading TLK file: " + fileName + " ");
+		LOGGER.info("Reading TLK file: " + fileName);
 
 		try {
 			// Check the header
@@ -87,7 +93,7 @@ public class Data_TLK{
 			}
 		}
 
-		if(verbose) System.out.println("- Done");
+		LOGGER.info("Done");
 	}
 
 
@@ -101,7 +107,7 @@ public class Data_TLK{
 	public String getEntry(int strRef){
 		if(strRef > 0x01000000) strRef -= 0x01000000;
 		String toReturn = mainData.get(strRef);
-		if(toReturn == null) toReturn = Main.badStrRef;
+		if(toReturn == null) toReturn = Autodoc.badStrRef;
 		return toReturn;
 	}
 
@@ -118,7 +124,7 @@ public class Data_TLK{
 	public String getEntry(String strRef){
 		try{
 			return getEntry(Integer.parseInt(strRef));
-		}catch(NumberFormatException e){ return Main.badStrRef; }
+		}catch(NumberFormatException e){ return Autodoc.badStrRef; }
 	}
 
 	/**
@@ -154,7 +160,7 @@ public class Data_TLK{
 			throw new IOException("File exists already: " + file.getAbsolutePath());
 
 		// Inform user
-		if(verbose) System.out.print("Saving tlk file: " + name + " ");
+		LOGGER.info("Saving tlk file: " + name);
 
 		PrintWriter writer = new PrintWriter(file);
 
@@ -173,7 +179,7 @@ public class Data_TLK{
 				data = data.replace(">", "&gt;");
 				writer.println("  <entry id=\"" + row + "\" lang=\"en\" sex=\"m\">" + data + "</entry>");
 			}
-			if(verbose) spinner.spin();
+			AppMain.spinner.spin();
 		}
 
 		//write the footer
@@ -182,7 +188,7 @@ public class Data_TLK{
 		writer.flush();
 		writer.close();
 
-		if(verbose) System.out.println("- Done");
+		LOGGER.info("Done");
 	}
 
 
@@ -211,7 +217,7 @@ public class Data_TLK{
 			// Skip to the end of the record
 			curOffset += 8;
 
-			if(verbose) spinner.spin();
+			AppMain.spinner.spin();
 		}
 		return toReturn;
 	}
@@ -239,7 +245,7 @@ public class Data_TLK{
 				// Wipe the buffer for next round
 				buffer.delete(0, buffer.length());
 			}
-			if(verbose) spinner.spin();
+			AppMain.spinner.spin();
 		}
 	}
 

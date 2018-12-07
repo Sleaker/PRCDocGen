@@ -1,11 +1,18 @@
 package prc.utils;
 
-import java.util.*;
 
-import prc.autodoc.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
-import static prc.Main.*;
-import static prc.autodoc.Main.TwoDAStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import prc.autodoc.Data_2da;
+import prc.autodoc.Tuple;
+import prc.autodoc.Autodoc.TwoDAStore;
+
 
 /**
  * Performs a bunch of cross-reference tests on 2das.
@@ -13,6 +20,7 @@ import static prc.autodoc.Main.TwoDAStore;
  * @author Ornedan
  */
 public class Validator {
+	private static Logger LOGGER = LoggerFactory.getLogger(Validator.class);
 	private static TwoDAStore twoDA;
 	private static boolean pedantic = false;
 	
@@ -83,7 +91,7 @@ public class Validator {
 				try {
 					casterLvl = Integer.parseInt(iprp_spells.getEntry("CasterLvl", i));
 				} catch(NumberFormatException e) {
-					err_pr.println("Error: Non-number value in iprp_spells.2da CasterLvl column on line " + i + ": " + iprp_spells.getEntry("CasterLvl", i));
+					LOGGER.error("Non-number value in iprp_spells.2da CasterLvl column on line " + i + ": " + iprp_spells.getEntry("CasterLvl", i));
 					continue;
 				}
 				
@@ -94,15 +102,15 @@ public class Validator {
 		for(int i = 0; i < des_crft_spells.getEntryCount(); i++) {
 			if(!des_crft_spells.getEntry("IPRP_SpellIndex", i).equals("****")) {
 				if(lowestIndex.get(i) == null)
-					err_pr.println("Error: des_crft_spells.2da IPRP_SpellIndex defined for spell " + i + ", but no matching iprp_spells.2da entries exist");
+					LOGGER.error("des_crft_spells.2da IPRP_SpellIndex defined for spell " + i + ", but no matching iprp_spells.2da entries exist");
 				try {
 					if(lowestIndex.get(i).e1 != Integer.parseInt(des_crft_spells.getEntry("IPRP_SpellIndex", i)))
-						err_pr.println("Warning: des_crft_spells.2da IPRP_SpellIndex entry on line " + i + " points at iprp_spells.2da entry with non-lowest CasterLvl value: " + des_crft_spells.getEntry("IPRP_SpellIndex", i) + " (lowest is on line: " + lowestIndex.get(i).e1 + ")");
+						LOGGER.error("Warning: des_crft_spells.2da IPRP_SpellIndex entry on line " + i + " points at iprp_spells.2da entry with non-lowest CasterLvl value: " + des_crft_spells.getEntry("IPRP_SpellIndex", i) + " (lowest is on line: " + lowestIndex.get(i).e1 + ")");
 				} catch(NumberFormatException e) {
-					err_pr.println("Error: Non-number value in des_crft_spells.2da IPRP_SpellIndex column on line " + i + ": " + iprp_spells.getEntry("SpellIndex", i));
+					LOGGER.error("Non-number value in des_crft_spells.2da IPRP_SpellIndex column on line " + i + ": " + iprp_spells.getEntry("SpellIndex", i));
 				}
 			} else if(lowestIndex.get(i) != null)
-				err_pr.println("Error: iprp_spells.2da entry defined for spell " + i + ", but des_crft_spells.2da IPRP_SpellIndex is not");
+				LOGGER.error("iprp_spells.2da entry defined for spell " + i + ", but des_crft_spells.2da IPRP_SpellIndex is not");
 		}
 	}
 
@@ -120,9 +128,9 @@ public class Validator {
 					     iprp_spells.getEntry("InnateLvl", i).equals("0.5")
 					     )
 					   )
-						err_pr.println("Warning: Differing Innate and InnateLvl among spells.2da and iprp_spells.2da on iprp_spells.2da line " + i + ": " + "(" + spells.getEntry("Innate", Integer.parseInt(iprp_spells.getEntry("SpellIndex", i))) + "," + iprp_spells.getEntry("InnateLvl", i) + ")");
+						LOGGER.error("Warning: Differing Innate and InnateLvl among spells.2da and iprp_spells.2da on iprp_spells.2da line " + i + ": " + "(" + spells.getEntry("Innate", Integer.parseInt(iprp_spells.getEntry("SpellIndex", i))) + "," + iprp_spells.getEntry("InnateLvl", i) + ")");
 				} catch(NumberFormatException e) {
-					err_pr.println("Error: Non-number value in iprp_spells.2da SpellIndex column on line " + i + ": " + iprp_spells.getEntry("SpellIndex", i));
+					LOGGER.error("Non-number value in iprp_spells.2da SpellIndex column on line " + i + ": " + iprp_spells.getEntry("SpellIndex", i));
 				}
 			}
 		}
@@ -141,7 +149,7 @@ public class Validator {
 							if(iprp_spells.getEntry("InnateLvl", i).equals("0.5"))
 								level = 0;
 							else {
-								err_pr.println("Error: Non-number value in iprp_spells.2da InnateLvl column on line " + i + ": " + iprp_spells.getEntry("InnateLvl", i));
+								LOGGER.error("Non-number value in iprp_spells.2da InnateLvl column on line " + i + ": " + iprp_spells.getEntry("InnateLvl", i));
 								continue;
 							}
 						}
@@ -153,19 +161,19 @@ public class Validator {
 									               16)
 								& 0x1) == 1;
 						} catch(NumberFormatException e) {
-							err_pr.println("Error: Non-number value among iprp_spells.2da SpellIndex and spells.2da TargetType on iprp_spells.2da line " + i);
+							LOGGER.error("Non-number value among iprp_spells.2da SpellIndex and spells.2da TargetType on iprp_spells.2da line " + i);
 							continue;
 						}
 						
 						if(iprp_spells.getEntry("PotionUse", i).equals("0") && targetSelf && level <= 3)
-							err_pr.println("Warning: PotionUse 0 in iprp_spells.2da when spell of 3rd level or less and self-targetable on line " + i);
+							LOGGER.error("Warning: PotionUse 0 in iprp_spells.2da when spell of 3rd level or less and self-targetable on line " + i);
 						if(iprp_spells.getEntry("PotionUse", i).equals("1") && (!targetSelf || level > 3))
-							err_pr.println("Warning: PotionUse 1 in iprp_spells.2da when spell of level higher than 3rd or not self-targetable on line " + i);
+							LOGGER.error("Warning: PotionUse 1 in iprp_spells.2da when spell of level higher than 3rd or not self-targetable on line " + i);
 						
 						if(iprp_spells.getEntry("WandUse", i).equals("0") && level <= 4)
-							err_pr.println("Warning: WandUse 0 in iprp_spells.2da when spell of 4th level or less on line " + i);
+							LOGGER.error("Warning: WandUse 0 in iprp_spells.2da when spell of 4th level or less on line " + i);
 						if(iprp_spells.getEntry("WandUse", i).equals("1") && level > 4)
-							err_pr.println("Warning: WandUse 1 in iprp_spells.2da when spell of level higher than 4th on line " + i);
+							LOGGER.error("Warning: WandUse 1 in iprp_spells.2da when spell of level higher than 4th on line " + i);
 					}
 				}
 			}
@@ -187,12 +195,12 @@ public class Validator {
 				try {
 					spellIDs.remove(Integer.parseInt(iprp_spells.getEntry("SpellIndex", i)));
 				} catch(NumberFormatException e) {
-					err_pr.println("Error: Non-number value in iprp_spells.2da SpellIndex column on line " + i + ": " + iprp_spells.getEntry("SpellIndex", i));
+					LOGGER.error("Non-number value in iprp_spells.2da SpellIndex column on line " + i + ": " + iprp_spells.getEntry("SpellIndex", i));
 				}
 			}
 		}
 		for(int spellID : spellIDs)
-			err_pr.println("Error: Spell " + spellID + " does not have any iprp_spells.2da entries");
+			LOGGER.error("Spell " + spellID + " does not have any iprp_spells.2da entries");
 	}
 
 	private static void doSpellsAndDes2dasTest(String twoDAPath) {
@@ -202,7 +210,7 @@ public class Validator {
 		
 		// First, whine about differing lengths on spells and des_crft_spells
 		if(spells.getEntryCount() != des_crft_spells.getEntryCount())
-			err_pr.println("Warning: spells.2da and des_crft_spells.2da have different number of entries");
+			LOGGER.error("Warning: spells.2da and des_crft_spells.2da have different number of entries");
 		
 		int maxCommon = Math.min(Math.min(spells.getEntryCount(), des_crft_spells.getEntryCount()), des_crft_scroll.getEntryCount());
 		
@@ -211,7 +219,7 @@ public class Validator {
 			if(!(spells.getEntry("Label", i).equals(des_crft_spells.getEntry("Label", i)) &&
 			     spells.getEntry("Label", i).equals(des_crft_scroll.getEntry("Label", i)) &&
 			     des_crft_spells.getEntry("Label", i).equals(des_crft_scroll.getEntry("Label", i))))
-				err_pr.println("Warning: Differing Label among spells.2da, des_crft_scroll.2da and des_crft_spells.2da on line: " + i + "('" + spells.getEntry("Label", i) + "','" + des_crft_scroll.getEntry("Label", i) + "','" + des_crft_spells.getEntry("Label", i) + "')");
+				LOGGER.error("Warning: Differing Label among spells.2da, des_crft_scroll.2da and des_crft_spells.2da on line: " + i + "('" + spells.getEntry("Label", i) + "','" + des_crft_scroll.getEntry("Label", i) + "','" + des_crft_spells.getEntry("Label", i) + "')");
 		}
 		
 		// Then, check spells.2da and des_crft_spells.2da
@@ -224,7 +232,7 @@ public class Validator {
 			     spells.getEntry("Label", i).equals("ReservedForISCAndESS"))
 			   ) {
 				if(!spells.getEntry("Label", i).equals(des_crft_spells.getEntry("Label", i)))
-					err_pr.println("Warning: Differing Label among spells.2da and des_crft_spells.2da on line: " + i + "('" + spells.getEntry("Label", i) + "','" + des_crft_spells.getEntry("Label", i) + "')");
+					LOGGER.error("Warning: Differing Label among spells.2da and des_crft_spells.2da on line: " + i + "('" + spells.getEntry("Label", i) + "','" + des_crft_spells.getEntry("Label", i) + "')");
 				try {
 					a = Integer.parseInt(spells.getEntry("Innate", i));
 				} catch(NumberFormatException e) {
@@ -239,18 +247,18 @@ public class Validator {
 				// If both are numeric, compare
 				if(spellsNum && desNum) {
 					if(a != b)
-						err_pr.println("Error: Differing Innate and Level values among spells.2da and des_crft_spells.2da on line " + i + ": " + "(" + a + "," + b + ")");
+						LOGGER.error("Differing Innate and Level values among spells.2da and des_crft_spells.2da on line " + i + ": " + "(" + a + "," + b + ")");
 				} // Otherwise, erroneous cases are those where only one value is non-numeric
 				else if(!spellsNum && desNum)
-					err_pr.println("Error: Non-number value in spells.2da Innate column on line " + i + ": " + spells.getEntry("Innate", i));
+					LOGGER.error("Non-number value in spells.2da Innate column on line " + i + ": " + spells.getEntry("Innate", i));
 				else if(spellsNum && !desNum)
-					err_pr.println("Error: Non-number value in des_crft_spells.2da Level column on line " + i + ": " + des_crft_spells.getEntry("Level", i));
+					LOGGER.error("Non-number value in des_crft_spells.2da Level column on line " + i + ": " + des_crft_spells.getEntry("Level", i));
 				// Or where the non-numericity is not just ****
 				else {
 					if(!spells.getEntry("Innate", i).equals("****"))
-						err_pr.println("Error: Non-number value in spells.2da Innate column on line " + i + ": " + spells.getEntry("Innate", i));
+						LOGGER.error("Non-number value in spells.2da Innate column on line " + i + ": " + spells.getEntry("Innate", i));
 					if(!des_crft_spells.getEntry("Level", i).equals("****"))
-						err_pr.println("Error: Non-number value in des_crft_spells.2da Level column on line " + i + ": " + des_crft_spells.getEntry("Level", i));
+						LOGGER.error("Non-number value in des_crft_spells.2da Level column on line " + i + ": " + des_crft_spells.getEntry("Level", i));
 				}
 			}
 		}
@@ -266,7 +274,7 @@ public class Validator {
 			    ) &&
 			   des_crft_spells.getEntry("NoScroll", i).equals("1")
 			   )
-				err_pr.println("Error: NoScroll 1 in des_crft_spells.2da when a scroll entry has been defined in des_crft_scroll.2da on line: " + i);
+				LOGGER.error("NoScroll 1 in des_crft_spells.2da when a scroll entry has been defined in des_crft_scroll.2da on line: " + i);
 		}
 		
 		// Then check that all spells that should have a scroll do have a scroll
@@ -283,7 +291,7 @@ public class Validator {
 	private static void checkScrollsPresence(Data_2da spells, Data_2da des_crft_scroll, String column, int i) {
 		if(!spells.getEntry(column, i).equals("****")) {
 			if(i >= des_crft_scroll.getEntryCount() || des_crft_scroll.getEntry(column, i).equals("****")) {
-				err_pr.println("Error: No " + column + " scroll defined in des_crft_scroll when " + column + " level is defined in spells on line: " + i);
+				LOGGER.error("No " + column + " scroll defined in des_crft_scroll when " + column + " level is defined in spells on line: " + i);
 			}
 		}
 	}

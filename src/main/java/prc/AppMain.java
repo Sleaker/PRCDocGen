@@ -1,15 +1,11 @@
 package prc;
 
-import prc.autodoc.ErrorPrinter;
 import prc.autodoc.Spinner;
 
-public class Main {
+public class AppMain {
 
 	/** Version number for public releases. Raise by one whenever doing a release. */
 	private static final int releaseNum = 1;
-
-	/** A convenience object for printing both to log and System.err */
-	public static ErrorPrinter err_pr = new ErrorPrinter();
 
 	/** A boolean determining whether to spam the user with progress information */
 	public static boolean verbose = true;
@@ -33,7 +29,7 @@ public class Main {
 		System.arraycopy(args, 1, params, 0, params.length);
 
 		if(app.equals("manual")) {
-			prc.autodoc.Main.main(params);
+			prc.autodoc.Autodoc.main(params);
 		}
 		else if(app.equals("2da")) {
 			prc.autodoc.Data_2da.main(params);

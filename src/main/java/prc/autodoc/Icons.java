@@ -5,8 +5,10 @@ import java.io.*;
 import java.util.concurrent.*;
 import javax.imageio.*;
 
-import static prc.Main.*;
-import static prc.autodoc.Main.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static prc.autodoc.Autodoc.*;
 
 /**
  * This class handles generating 
@@ -14,7 +16,7 @@ import static prc.autodoc.Main.*;
  * @author Ornedan
  */
 public class Icons{
-	
+	private static Logger LOGGER = LoggerFactory.getLogger(Icons.class);
 	/**
 	 * Visible from outside so that Main can wait on it.
 	 */
@@ -52,7 +54,7 @@ public class Icons{
 		
 		// Ensure the icons directory exists
 		if(tgas == null) {
-			err_pr.println("Icons directory is missing!");
+			LOGGER.error("Icons directory is missing!");
 			if(tolErr) return;
 			else       System.exit(1);
 		}
@@ -99,32 +101,14 @@ public class Icons{
 		File tga = rawIcons.get(iconName + ".tga");
 		// There is no icon to convert
 		if(tga == null){
-			err_pr.println("Missing icon file: " + iconName + ".tga");
+			LOGGER.error("Missing icon file: " + iconName + ".tga");
 			return "";
 		}
 		
 		// Schedule the conversion for execution
 		Convert task = new Convert();
 		        task.init(tga, png);
-		Future fut = executor.submit(task);
-		
-		
-		// Schedule timer task
-		/*
-		Check check = new Check();
-		      check.init(fut, iconName);
-		timer.schedule(check, System.currentTimeMillis() + 30000);
-		*/
-		/*
-		try{
-			reader.setSource(new FileInputStream(new File("rawicons" + fileSeparator + iconName + ".tga")));
-			writer.setSource(reader.getImage());
-			writer.putImage(imagePath + iconName + ".png");
-		}catch(Exception e){
-			err_pr.printException(e);
-			throw new RuntimeException(e);
-		}
-		*/
+
 		// Assume eventual success and add the newly created image to the index
 		existingIcons.add(iconName);
 		
@@ -151,57 +135,10 @@ public class Icons{
 		public void run(){
 			try {
 				if(!ImageIO.write(ImageIO.read(inFile), "png", outFile))
-					err_pr.println("Failed to convert image " + inFile);
+					LOGGER.error("Failed to convert image " + inFile);
 			} catch (IOException e) {
-				err_pr.printException(e);
+				LOGGER.debug("Failed to convert:", e);
 			}
 		}
 	}
-
-	private static class Check extends TimerTask{
-		private Future toCheck;
-		private String iconName;
-		/**
-		 * Initialization method
-		 * @param toCheck future representing the image conversion to check on
-		 * @param iconName name of the icon being converted by the task to check on
-		 */
-		public void init(Future toCheck, String iconName){
-			this.toCheck = toCheck;
-			this.iconName = iconName;
-		}
-
-		/**
-		 * @see java.util.TimerTask#run()
-		 */
-		public void run(){
-			if(!toCheck.isDone()){
-				toCheck.cancel(true);
-				err_pr.println("Failed icon conversion on file " + iconName + ".tga");
-			}
-			
-			//executor.purge();
-		}
-		
-	}
-	/*
-	public static void main(String[] args) throws Exception{
-		
-		System.out.println("Yar!");
-		icons = true;
-		iconTemplate = readTemplate("templates" + fileSeparator + "english" + fileSeparator + "icon.html");
-		System.out.println(buildImg("test"));
-		
-		ImageIO.setUseCache(false);
-		Iterator<ImageReader> it = ImageIO.getImageReadersByMIMEType("image/targa");
-		while(it.hasNext())
-			System.out.println(it.next().getFormatName());
-		
-		java.awt.image.BufferedImage buf = ImageIO.read(new File("isk_x1app.tga"));
-		System.out.println("Tar!");
-		ImageIO.write(buf, "png", new File("test.png"));
-		System.out.println("Far!");
-		
-	}
-	*/
 }

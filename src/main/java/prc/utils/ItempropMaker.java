@@ -1,16 +1,15 @@
 package prc.utils;
 
-import prc.autodoc.*;
+import java.io.File;
+import java.io.FileWriter;
 
-import java.io.*;
-import java.math.*;
-//import java.util.*;
-//import java.util.regex.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-//for the spinner
-import static prc.Main.*;
+import prc.autodoc.Data_2da;
 
-public final class ItempropMaker{
+public final class ItempropMaker {
+	private static Logger LOGGER = LoggerFactory.getLogger(ItempropMaker.class);
 	private ItempropMaker(){}
 
 
@@ -262,10 +261,10 @@ public final class ItempropMaker{
 		File target = new File("xml_temp" + File.separator + resref + ".uti.xml");
 		// Clean up old version if necessary
 		if(target.exists()){
-			if(verbose) System.out.println("Deleting previous version of " + target.getName());
+			LOGGER.info("Deleting previous version of " + target.getName());
 			target.delete();
 		}
-		if(verbose) System.out.println("Writing brand new version of " + target.getName());
+		LOGGER.info("Writing brand new version of " + target.getName());
 		target.createNewFile();
 
 		// Creater the writer and print

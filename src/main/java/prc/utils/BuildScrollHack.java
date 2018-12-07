@@ -2,8 +2,8 @@ package prc.utils;
 
 import java.io.IOException;
 
-import prc.autodoc.Main.TLKStore;
-import prc.autodoc.Main.TwoDAStore;
+import prc.autodoc.Autodoc.TLKStore;
+import prc.autodoc.Autodoc.TwoDAStore;
 
 /**
  * A class that combines Scrollgen, UpdateDes and ScrollMerchantGen. For use during

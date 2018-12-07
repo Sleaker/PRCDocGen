@@ -1,24 +1,37 @@
 package prc.autodoc;
 
-import java.io.*;
-import java.util.*;
-import java.util.regex.*;
-import java.util.concurrent.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import prc.AppMain;
 
 /* Mutual static import to make the file sizes manageable */
 import static prc.autodoc.EntryGeneration.*;
 import static prc.autodoc.MenuGeneration.*;
 import static prc.autodoc.PageGeneration.*;
 
-/* Error printer, spinner and verbosity settings */
-import static prc.Main.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The main purpose of this autodocumenter is to create parts of the manual for
  * the PRC pack from 2da and TLK files. As a side effect of doing so, it finds
  * many errors present in the 2das.
  */
-public class Main {
+public class Autodoc {
+	private static Logger LOGGER = LoggerFactory.getLogger(Autodoc.class);
 	/**
 	 * A small data structure class that gives access to both normal and custom
 	 * TLK with the same method
@@ -79,7 +92,7 @@ public class Main {
 		public String get(String num){
 			try{
 				return get(Integer.parseInt(num));
-			}catch(NumberFormatException e){ return Main.badStrRef; }
+			}catch(NumberFormatException e){ return badStrRef; }
 		}
 	}
 
@@ -112,14 +125,13 @@ public class Main {
 					list.add(data);
 					latch.countDown();
 				} catch(Exception e) {
-					err_pr.println("Failure while reading main 2das. Exception data:\n");
-					err_pr.printException(e);
+					LOGGER.debug("Failure while reading main 2das. Exception data:", e);
 					System.exit(1);
 				}
 			}
 		}
 
-		private HashMap<String, Data_2da> data = new HashMap<String, Data_2da>();
+		private Map<String, Data_2da> data = new HashMap<String, Data_2da>();
 		private String twoDAPath;
 
 		/**
@@ -139,9 +151,8 @@ public class Main {
 		public TwoDAStore() {
 			this("2da");
 			//long start = System.currentTimeMillis();
-			if(verbose) System.out.print("Loading main 2da files ");
-			boolean oldVerbose = verbose;
-			verbose = false;
+			LOGGER.info("Loading main 2da files ");
+			boolean verbose = false;
 
 			CountDownLatch latch = new CountDownLatch(7);
 			List<Data_2da> list = Collections.synchronizedList(new ArrayList<Data_2da>());
@@ -157,31 +168,14 @@ public class Main {
 			try {
 				latch.await();
 			} catch (InterruptedException e) {
-				err_pr.println("Interrupted while reading main 2das. Exception data:\n");
-				err_pr.printException(e);
+				LOGGER.debug("Interrupted while reading main 2das. Exception data:", e);
 				System.exit(1);
 			}
 
-			for(Data_2da entry : list)
+			for(Data_2da entry : list) {
 				data.put(entry.getName(), entry);
-			verbose = oldVerbose;
-			if(verbose) System.out.println("- Done");
-			/*
-			try{
-				data.put("classes",     new Data_2da("2da" + fileSeparator + "classes.2da"));
-				data.put("domains",     new Data_2da("2da" + fileSeparator + "domains.2da"));
-				data.put("feat",        new Data_2da("2da" + fileSeparator + "feat.2da"));
-				data.put("masterfeats", new Data_2da("2da" + fileSeparator + "masterfeats.2da"));
-				data.put("racialtypes", new Data_2da("2da" + fileSeparator + "racialtypes.2da"));
-				data.put("skills",      new Data_2da("2da" + fileSeparator + "skills.2da"));
-				data.put("spells",      new Data_2da("2da" + fileSeparator + "spells.2da"));
-			}catch(Exception e){
-				err_pr.println("Failure while reading main 2das. Exception data:\n");
-				err_pr.printException(e);
-				System.exit(1);
 			}
-			*/
-			//System.out.println("Time taken: "  + (System.currentTimeMillis() - start));
+			LOGGER.info("Done");
 		}
 
 		/**
@@ -249,8 +243,8 @@ public class Main {
 		 * Read the settings file in and store the data for later access.
 		 * Terminates execution on any errors.
 		 */
-		public Settings(){
-			try{
+		public Settings() {
+			try {
 				// The settings file should be present in the directory this is run from
 				Scanner reader = new Scanner(new File("settings"));
 				String check;
@@ -418,8 +412,8 @@ public class Main {
 						modifiedSpells.add(Integer.parseInt(check.trim()));
 					}
 				}
-			}catch(Exception e){
-				err_pr.println("Failed to read settings file:\n" + e + "\nAborting");
+			} catch(Exception e) {
+				LOGGER.debug("Failed to read settings file:", e);
 				System.exit(1);
 			}
 		}
@@ -616,13 +610,12 @@ public class Main {
 				if(opt.contains("a"))
 					tolErr = true;
 				if(opt.contains("q")){
-					verbose = false;
-					spinner.disable();
+					AppMain.spinner.disable();
 				}
 				if(opt.contains("i"))
 					icons = true;
 				if(opt.contains("s"))
-					spinner.disable();
+					AppMain.spinner.disable();
 				if(opt.contains("?"))
 					readMe();
 			}
@@ -648,7 +641,7 @@ public class Main {
 			try{
 				tlk = new TLKStore(curLanguageData[LANGDATA_BASETLK], curLanguageData[LANGDATA_PRCTLK]);
 			}catch(TLKReadException e){
-				err_pr.println("Failure while reading TLKs for language: " + curLanguage +":\n" + e);
+				LOGGER.debug("Failure while reading TLKs for language: " + curLanguage, e);
 				continue;
 			}
 
@@ -663,11 +656,11 @@ public class Main {
 		// Wait for the image conversion to finish before exiting main
 		if (Icons.executor != null){
 			Icons.executor.shutdown();
-			try{
+			try {
 				Icons.executor.awaitTermination(120, TimeUnit.SECONDS);
-			}catch(InterruptedException e){
-				err_pr.println("Interrupted while waiting for image conversion to finish");
-			}finally{
+			}catch(InterruptedException e) {
+				LOGGER.debug("Interrupted while waiting for image conversion to finish");
+			} finally {
 				System.exit(0);
 			}
 		}
@@ -729,7 +722,7 @@ public class Main {
 			classMagicTableTemplate         = readTemplate(templatePath + "classmagictable.html");
 			classMagicTableEntryTemplate    = readTemplate(templatePath + "classmagictableentry.html");
 			craftTemplate                   = readTemplate(templatePath + "craftprop.html");
-		}catch(IOException e){
+		} catch(IOException e) {
 			return false;
 		}
 		return true;
@@ -745,16 +738,15 @@ public class Main {
 	 *
 	 * @throws IOException if the reading fails
 	 */
-	private static String readTemplate(String filePath) throws IOException{
-		try{
-			Scanner reader = new Scanner(new File(filePath));
+	private static String readTemplate(String filePath) throws IOException {
+		try(Scanner reader = new Scanner(new File(filePath))) {
 			StringBuffer temp = new StringBuffer();
 
 			while(reader.hasNextLine()) temp.append(reader.nextLine() + "\n");
 
 			return temp.toString();
-		}catch(Exception e){
-			err_pr.println("Failed to read template file:\n" + e);
+		} catch(Exception e) {
+			LOGGER.debug("Failed to read template file:", e);
 			throw new IOException();
 		}
 	}
@@ -766,7 +758,7 @@ public class Main {
 	 * @return <code>true</code> if all directories are successfully created,
 	 *           <code>false</code> otherwise
 	 */
-	private static boolean buildDirectories(){
+	private static boolean buildDirectories() {
 		String dirPath = mainPath + "content";
 
 		boolean toReturn = buildDir(dirPath);
@@ -810,12 +802,12 @@ public class Main {
 		File builder = new File(path);
 		if(!builder.exists()){
 			if(!builder.mkdirs()){
-				err_pr.println("Failure creating directory:\n" + builder.getPath());
+				LOGGER.error("Failure creating directory:\n" + builder.getPath());
 				return false;
 		}}
 		else{
 			if(!builder.isDirectory()){
-				err_pr.println(builder.getPath() + " already exists as a file!");
+				LOGGER.error(builder.getPath() + " already exists as a file!");
 				return false;
 		}}
 		return true;
@@ -847,7 +839,7 @@ public class Main {
 			File target = new File(path);
 			// Clean up old version if necessary
 			if(target.exists()){
-				if(verbose) System.out.println("Deleting previous version of " + path);
+				LOGGER.info("Deleting previous version of " + path);
 				target.delete();
 			}
 			target.createNewFile();

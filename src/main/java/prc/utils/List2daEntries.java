@@ -1,8 +1,15 @@
 package prc.utils;
 
-import java.util.*;
 
-import prc.Main;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import prc.AppMain;
 import prc.autodoc.Data_2da;
 
 /**
@@ -11,7 +18,7 @@ import prc.autodoc.Data_2da;
  * @author Ornedan
  */
 public class List2daEntries {
-
+	private static Logger LOGGER = LoggerFactory.getLogger(List2daEntries.class);
 	/**
 	 * Ye olde main.
 	 * 
@@ -20,7 +27,7 @@ public class List2daEntries {
 	public static void main(String[] args) {
 		if(args.length == 0) readMe();
 		String filePath = null;
-		ArrayList<String> labels = new ArrayList<String>();
+		List<String> labels = new ArrayList<String>();
 		boolean quiet = false;
 		
 		// parse args
@@ -35,7 +42,7 @@ public class List2daEntries {
 							quiet = true;
 							break;
 						default:
-							System.out.println("Unknown parameter: " + c);
+							LOGGER.error("Unknown parameter: " + c);
 							readMe();
 						}
 					}
@@ -51,8 +58,7 @@ public class List2daEntries {
 		}
 		
 		if(quiet) {
-			Main.verbose = false;
-			Main.spinner.disable();
+			AppMain.spinner.disable();
 		}
 		
 		// Load the 2da

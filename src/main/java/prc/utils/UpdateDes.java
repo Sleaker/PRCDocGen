@@ -1,12 +1,16 @@
 package prc.utils;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-import prc.autodoc.*;
-import prc.autodoc.Main.TwoDAStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static prc.autodoc.Main.TwoDAStore;
+import prc.autodoc.Data_2da;
+import prc.autodoc.Tuple;
+import prc.autodoc.Autodoc.TwoDAStore;
+
 
 /**
  * A tool for automatically updating parts of des_crft_scrolls.2da
@@ -15,6 +19,7 @@ import static prc.autodoc.Main.TwoDAStore;
  * @author Ornedan
  */
 public class UpdateDes {
+	private static Logger LOGGER = LoggerFactory.getLogger(UpdateDes.class);
 	
 	/**
 	 * Ye olde maine methode.
@@ -36,20 +41,16 @@ public class UpdateDes {
 					for(char c : param.substring(1).toCharArray()) {
 						switch(c) {
 						default:
-							System.out.println("Unknown parameter: " + c);
+							LOGGER.error("Unknown parameter: " + c);
 							readMe();
 						}
 					}
 				}
-			}
-			else {
-				// It's a pathname
+			} else {
 				if(twoDAPath == null)
 					twoDAPath = param;
-				/*else if(tlkPath == null)
-					tlkPath = param;*/
 				else{
-					System.out.println("Unknown parameter: " + param);
+					LOGGER.error("Unknown parameter: " + param);
 					readMe();
 				}
 			}

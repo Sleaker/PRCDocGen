@@ -1,7 +1,7 @@
 package prc.autodoc;
 
 import java.util.List;
-import prc.autodoc.Main.SpellType;
+import prc.autodoc.Autodoc.SpellType;
 
 /**
  * Data structure for a spell entry.

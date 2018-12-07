@@ -1,16 +1,18 @@
 package prc.utils;
 
-import prc.autodoc.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 
-import java.io.*;
-import java.math.*;
-//import java.util.*;
-//import java.util.regex.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-//for the spinner
-import static prc.Main.*;
+import prc.AppMain;
+import prc.autodoc.Data_2da;
 
-public final class SQLMaker{
+public final class SQLMaker {
+	private static Logger LOGGER = LoggerFactory.getLogger(SQLMaker.class);
 	private SQLMaker(){}
 
 	private static BufferedWriter sql;
@@ -38,7 +40,7 @@ public final class SQLMaker{
 		File target = new File("out.sql");
 		// Clean up old version if necessary
 		if(target.exists()){
-			if(verbose) System.out.println("Deleting previous version of " + target.getName());
+			LOGGER.info("Deleting previous version of " + target.getName());
 			target.delete();
 		}
 		target.createNewFile();
@@ -136,7 +138,7 @@ public final class SQLMaker{
 		filename = file.getName();
 		filename = filename.substring(0, filename.length()-4);
 		//tell the user what were doing
-		if(verbose) System.out.print("Making SQL from "+filename+" ");
+		LOGGER.info("Making SQL from "+filename+" ");
 		//specific files get their own tables
         if(filename.matches("feat")
             || filename.matches("spells")
@@ -166,7 +168,7 @@ public final class SQLMaker{
 			addSQLForGeneralTable(data, filename);
 		}
 		//tell user finished that table
-		if(verbose) System.out.println("- Done");
+		LOGGER.info("- Done");
 
 //		 Force garbage collection
 		System.gc();
@@ -207,7 +209,7 @@ public final class SQLMaker{
 					value = "";
 				entry.append("'"+value+"'");
 
-				if(verbose) spinner.spin();
+				AppMain.spinner.spin();
 			}
 			entry.append(");");
 			sql.append(entry + "\n");
@@ -235,7 +237,7 @@ public final class SQLMaker{
 					value = "";
 				entry.append("'"+value+"'");
 
-				if(verbose) spinner.spin();
+				AppMain.spinner.spin();
 			}
 			entry.append(");");
 			sql.append(entry + "\n");
@@ -256,7 +258,7 @@ public final class SQLMaker{
 				entry.append(");");
 				sql.append(entry + "\n");
 
-				if(verbose) spinner.spin();
+				AppMain.spinner.spin();
 			}
 		}
 	}

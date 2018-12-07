@@ -1,16 +1,14 @@
 package prc.utils;
 
-import prc.autodoc.*;
+import java.io.File;
 
-import java.io.*;
-import java.math.*;
-//import java.util.*;
-//import java.util.regex.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-//for the spinner
-import static prc.Main.*;
+import prc.autodoc.Data_2da;
 
-public final class Data2daMerge{
+public final class Data2daMerge {
+	private static Logger LOGGER = LoggerFactory.getLogger(Data2daMerge.class);
 	private Data2daMerge(){}
 
 	private static String source = "";
@@ -49,7 +47,7 @@ public final class Data2daMerge{
 			if(sourceFile.getPath().endsWith(".2da")){
 				String sourceFilename = sourceFile.getName().substring(0, sourceFile.getName().length() - 4);
 				//loop over the merge files to find one that matches the source
-				boolean matchFound = false;
+
 				for(int j = 0; j < mergeFiles.length; j++){
 					mergeFile = mergeFiles[j];
 					//ignore non-2da files
@@ -57,7 +55,7 @@ public final class Data2daMerge{
 						String mergeFilename = mergeFile.getName().substring(0, mergeFile.getName().length() - 4);
 						//its a match
 						if(mergeFilename.equals(sourceFilename)){
-							matchFound = true;
+
 							String sourcePath = sourceFile.getAbsolutePath();
 							String mergePath  = mergeFile.getAbsolutePath();
 							sourceData = Data_2da.load2da(sourcePath, true);
@@ -101,7 +99,7 @@ public final class Data2daMerge{
 											if(!mergeEntry.equals("****")){
 												outputData.setEntry(columnName, row, mergeEntry);
 												//made a change, log it
-												System.out.println(sourceFilename+" : "+columnName+","+row+" null -> "+mergeEntry);
+												LOGGER.info(sourceFilename+" : "+columnName+","+row+" null -> "+mergeEntry);
 											}
 										}
 									}
