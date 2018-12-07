@@ -1,6 +1,7 @@
 # Gradle Files
 .gradle
 build/
+bin/
 
 # VS Code Workspace
 .vscode
