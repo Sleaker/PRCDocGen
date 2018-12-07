@@ -414,9 +414,7 @@ public final class PageGeneration{
 	 * Subsections handled by several following methods.
 	 */
 	public static void printClasses() {
-		String text      = null,
-		       temp      = null;
-		String[] tempArr = null;
+		String text      = null;
 
 		for(ClassEntry class_ : classes.values()) {
 			LOGGER.info("Printing page for " + class_.name);

@@ -152,7 +152,6 @@ public class Autodoc {
 			this("2da");
 			//long start = System.currentTimeMillis();
 			LOGGER.info("Loading main 2da files ");
-			boolean verbose = false;
 
 			CountDownLatch latch = new CountDownLatch(7);
 			List<Data_2da> list = Collections.synchronizedList(new ArrayList<Data_2da>());
@@ -244,9 +243,8 @@ public class Autodoc {
 		 * Terminates execution on any errors.
 		 */
 		public Settings() {
-			try {
+			try (Scanner reader = new Scanner(new File("settings"))) {
 				// The settings file should be present in the directory this is run from
-				Scanner reader = new Scanner(new File("settings"));
 				String check;
 				Modes mode = null;
 				while(reader.hasNextLine()){

@@ -47,8 +47,7 @@ public class Data_TLK{
 		}catch(IOException e){
 			throw new TLKReadException("Cannot access TLK file: " + filePath, e);
 		}
-		byte[] bytes4 = new byte[4],
-		       bytes8 = new byte[8];
+		byte[] bytes4 = new byte[4];
 
 		// Drop the path from the filename
 		String fileName = baseFile.getName();

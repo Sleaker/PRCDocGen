@@ -3,8 +3,6 @@ package prc.autodoc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import prc.autodoc.Autodoc.SpellType;
-
 import static prc.autodoc.Autodoc.*;
 
 import java.util.HashMap;
@@ -150,7 +148,6 @@ public final class MenuGeneration {
 		             normalMasterList = new StringBuffer(),
 		             epicList         = new StringBuffer(),
 		             epicMasterList   = new StringBuffer();
-		String temp = null;
 		String normalMenu = featMenuTemplate,
 		       epicMenu   = featMenuTemplate;
 
@@ -236,7 +233,6 @@ public final class MenuGeneration {
 		                        prestigeLinks  = new TreeMap<String, String>();
 		StringBuffer basePrint     = new StringBuffer(),
 		             prestigePrint = new StringBuffer();
-		String temp = null;
 
 		LOGGER.info("Printing class menus");
 

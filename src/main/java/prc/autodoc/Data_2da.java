@@ -298,7 +298,6 @@ public class Data_2da implements Cloneable {
 	 *                   departures from the 2da spec present in Bioware 2das
 	 */
 	private void createData(Scanner reader, Matcher matcher, boolean bugCompat){
-		Scanner rowParser;
 		String data, bugCompat_data;
 		boolean bugCompat_MissingDefaultLine = false;
 		int line = 0;
@@ -888,6 +887,7 @@ public class Data_2da implements Cloneable {
 					s = s.substring(1, s.length() - 1);
 				fileNames.add(s);
 			}
+			scan.close();
 		}
 
 		// Run the specified operation
@@ -1014,7 +1014,6 @@ public class Data_2da implements Cloneable {
 	public String toString(){
 		String CRLF = "\r\n";
 		StringBuffer toReturn = new StringBuffer();
-		boolean evenColumns = true;
 		String[] labels = this.getLabels();
 		String toWrite;
 
